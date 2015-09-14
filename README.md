@@ -3,6 +3,16 @@ reb
 
 Home location for rebol scripts.
 
+### Usage ###
+
+DO %env.reb first.
+
+Subsequently, DO <script-file> as required.
+
+### script-needs ###
+
+SCRIPT-NEEDS declares the required files for a script and internally uses
+ENV to find and DO those files.
 
 ### License ###
 

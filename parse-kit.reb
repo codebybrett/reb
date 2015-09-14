@@ -436,7 +436,7 @@ either system/version > 2.100.0 [; Rebol 3
 		{Creates a rule that succeeds or fails depending on the pattern but does not move input position.}
 		pattern [block!] {Parse pattern.}
 	] [
-		compose/only [and (rule)]
+		compose/only [and (pattern)]
 	]
 
 ] [; Rebol 2

@@ -46,7 +46,7 @@ env: context [
 		] [
 
 			files: read cache
-			remove-each file [not parse/all file [thru %.reb]]
+			remove-each file files [not parse/all file [thru %.reb]]
 
 			foreach file files [
 				log [refresh (file)]

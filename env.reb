@@ -76,7 +76,7 @@ env: context [
 
 		set [path name] split-path file
 
-		either path = %./ [
+		either any [url? path path = %./] [
 
 			; Search for file if not already used.
 

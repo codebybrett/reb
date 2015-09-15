@@ -38,26 +38,26 @@ env: context [
 
 	master: https://raw.githubusercontent.com/codebybrett/reb/master/
 
-	cache: what-dir
+	base: what-dir
 
 	log: none
 
-	log [env (compose [cache (cache) master (master)])]
+	log [env (compose [base (base) master (master)])]
 
 	scripts: context [
 
 		used: make block! []
 
 		refresh: funct [
-			{Refresh each script in cache directory.}
+			{Refresh each script in base directory.}
 		] [
 
-			files: read cache
+			files: read base
 			remove-each file files [not parse/all file [thru %.reb]]
 
 			foreach file files [
 				log [refresh (file)]
-				write cache/:file read master/:file
+				write base/:file read master/:file
 			]
 		]
 	]
@@ -83,31 +83,35 @@ env: context [
 
 		set [path name] split-path file
 
+		get-script: func [file][
+			script-text: attempt [read script-name: file]
+		]
+
 		either any [url? path path = %./] [
 
 			; Search for file if not already used.
 
 			if not find scripts/used name [
 
-				required-file: case [
-					exists? name [name]
-					exists? cache/:name [cache/:name]
-					url? path [file]
-					true [master/:name]
+				any [
+					get-script name
+					get-script base/:name
+					if url? path [get-script file]
+					get-script master/:name
 				]
 			]
 		] [
 
 			; Specific file - run each time.
 
-			required-file: file
+			get-script file
 		]
 
-		if required-file [
+		if script-text [
 
-			file: clean-path required-file
+			file: clean-path script-name
 			log [run (file)]
-			do file
+			do script-text
 			def: compose [
 				file (file)
 			]
@@ -133,4 +137,6 @@ script-needs: funct [
 	] [make error! rejoin [{Could not parse script-needs near: } copy/part pos 40]]
 ]
 
-env/cache
+if file? system/script/args [env/base: system/script/args]
+
+env/base

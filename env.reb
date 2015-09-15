@@ -80,25 +80,27 @@ env: context [
 		view: found? find form system/product {view}
 	]
 
-	run: funct [
-		{Run a script.}
-		file [file! url!]
-		/local path name
-	] [
+	retrieve: funct [
+		{Retrieve a script.}
+		pattern [file! url!]
+	][
 
-		set [path name] split-path file
+		path: name: none
+		set [path name] split-path pattern
 
 		failed: make block! []
 
-		read-script: func [file][
-			if not find failed file [
-				script: context [
-					name: file
+		read-script: func [fullpath][
+			if not find failed fullpath [
+				script: context compose [
+					id: (name)
+					file: (fullpath)
 					text: attempt [
-						append failed file
-						log [read (file)]
-						read file
+						append failed fullpath
+						log [read (fullpath)]
+						read fullpath
 					]
+					time: now/precise
 				]
 			]
 			script/text
@@ -113,7 +115,7 @@ env: context [
 				any [
 					read-script name
 					read-script base/:name
-					if url? file [read-script file]
+					if url? pattern [read-script pattern]
 					read-script master/:name
 				]
 			]
@@ -124,20 +126,33 @@ env: context [
 			get-script file
 		]
 
+		script
+	]
+
+	run: funct [
+		{Run a script.}
+		search-file [file! url!]
+	] [
+
+		script: retrieve search-file
+
 		either script/text [
 
-			file: clean-path script/name
-			log [run true (file)]
+			file: clean-path script/file
+			log [run true (search-file)]
 
 			do script/text
 			def: compose [
-				file (file)
+				file (script/file)
+				;; search (search-file)
+				;; time (script/time)
 			]
-			insert position: tail scripts/used reduce [name def]
+			new-line/all/skip def true 2
+			insert position: tail scripts/used reduce [script/id def]
 			new-line position true
 		][
 
-			log [run false (script/name)]
+			log [run false (script/file)]
 		]
 
 		file

@@ -18,7 +18,7 @@ script-needs [
 ]
 
 decode-lines: funct [
-	{Decode string from prefixed lines (e.g. comments).}
+	{Decode string from prefixed lines e.g. comments (modifies).}
 	string [string!]
 	line-prefix [string!] {Usually "**" or "//".}
 	indent [string!] {Usually "  ".}

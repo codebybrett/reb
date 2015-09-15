@@ -5,11 +5,25 @@ Home location for rebol scripts.
 
 ### Usage ###
 
-DO %env.reb first.
+    DO %env.reb
 
-Subsequently, DO <script-file> as required.
+Subsequently as required:
 
-### script-needs ###
+    DO <script-file>
+
+### env, script-needs ###
+
+ENV is located in your BASE folder. ENV will record what that folder
+is using what-dir.
+
+Your BASE folder is a cache of copied scripts. If ENV cannot find a script
+in your current or BASE folder it will look for it in MASTER.
+
+MASTER is currently the folder in which this readme is located.
+
+If you want your base to be a webservice use
+
+    DO/ARGS %env.reb http://.../ ; Path to base folder.
 
 SCRIPT-NEEDS declares the required files for a script and internally uses
 ENV to find and DO those files.

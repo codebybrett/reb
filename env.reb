@@ -68,6 +68,8 @@ env: context [
 					log [refresh false (file)]
 				]
 			]
+			clear used
+			exit
 		]
 	]
 

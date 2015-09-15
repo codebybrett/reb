@@ -44,6 +44,13 @@ env: context [
 		what-dir
 	]
 
+	file-url: funct [{Maps desired url to webservice url.} url][
+		either parse/all url [{https://raw.githubusercontent.com/} to end][
+			path: split-path url
+			rejoin reduce [path/1 %master/ path/2]
+		][url]
+	]
+
 	logfn: func [message] [print mold new-line/all compose/only message false]
 	log: none ; Set to logfn for logging.
 
@@ -121,7 +128,7 @@ env: context [
 				any [
 					read-script name
 					read-script base/:name
-					if url? pattern [read-script pattern]
+					if url? pattern [read-script file-url pattern]
 					read-script master/:name
 				]
 			]

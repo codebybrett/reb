@@ -129,7 +129,7 @@ env: context [
 
 			; Specific file - run each time.
 
-			get-script file
+			read-script pattern
 		]
 
 		script

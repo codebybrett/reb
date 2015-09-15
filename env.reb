@@ -27,6 +27,13 @@ REBOL [
 ; -----------------------------------------------------------------------------
 
 
+;
+; TODO:
+;
+;	* Refresh file from url other than reb. Need a manifest?
+;
+
+
 env: context [
 
 	master: https://raw.githubusercontent.com/codebybrett/reb/master/
@@ -85,6 +92,7 @@ env: context [
 				required-file: case [
 					exists? name [name]
 					exists? cache/:name [cache/:name]
+					url? path [file]
 					true [master/:name]
 				]
 			]

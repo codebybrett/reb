@@ -44,8 +44,8 @@ env: context [
 		what-dir
 	]
 
-	log: func [message] [print mold new-line/all compose/only message false]
-	log: none
+	logfn: func [message] [print mold new-line/all compose/only message false]
+	log: none ; Set to logfn for logging.
 
 	log [env (compose [base (base) master (master)])]
 
@@ -54,15 +54,19 @@ env: context [
 		used: make block! []
 
 		refresh: funct [
-			{Refresh each script in base directory.}
+			{Attempt to refresh each script in base directory from master.}
 		] [
 
 			files: read base
 			remove-each file files [not parse/all file [thru %.reb]]
 
 			foreach file files [
-				log [refresh (file)]
-				write base/:file read master/:file
+				either text: attempt [read master/:file][
+					log [refresh true (file)]
+					write base/:file text
+				][
+					log [refresh false (file)]
+				]
 			]
 		]
 	]

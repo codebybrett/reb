@@ -38,8 +38,13 @@ env: context [
 
 	master: https://raw.githubusercontent.com/codebybrett/reb/master/
 
-	base: what-dir
+	base: either find [url!] type?/word system/script/args [
+		system/script/args
+	][
+		what-dir
+	]
 
+	log: func [message] [print mold new-line/all compose/only message false]
 	log: none
 
 	log [env (compose [base (base) master (master)])]
@@ -83,8 +88,20 @@ env: context [
 
 		set [path name] split-path file
 
-		get-script: func [file][
-			script-text: attempt [read script-name: file]
+		failed: make block! []
+
+		read-script: func [file][
+			if not find failed file [
+				script: context [
+					name: file
+					text: attempt [
+						append failed file
+						log [read (file)]
+						read file
+					]
+				]
+			]
+			script/text
 		]
 
 		either any [url? path path = %./] [
@@ -94,10 +111,10 @@ env: context [
 			if not find scripts/used name [
 
 				any [
-					get-script name
-					get-script base/:name
-					if url? path [get-script file]
-					get-script master/:name
+					read-script name
+					read-script base/:name
+					if url? file [read-script file]
+					read-script master/:name
 				]
 			]
 		] [
@@ -107,17 +124,23 @@ env: context [
 			get-script file
 		]
 
-		if script-text [
+		either script/text [
 
-			file: clean-path script-name
-			log [run (file)]
-			do script-text
+			file: clean-path script/name
+			log [run true (file)]
+
+			do script/text
 			def: compose [
 				file (file)
 			]
 			insert position: tail scripts/used reduce [name def]
 			new-line position true
+		][
+
+			log [run false (script/name)]
 		]
+
+		file
 	]
 
 ]
@@ -136,7 +159,5 @@ script-needs: funct [
 		]
 	] [make error! rejoin [{Could not parse script-needs near: } copy/part pos 40]]
 ]
-
-if file? system/script/args [env/base: system/script/args]
 
 env/base

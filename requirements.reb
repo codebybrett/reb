@@ -35,7 +35,8 @@ either system/version > 2.100.0 [; Rebol3
 	user-error: funct [match [string! block!] test [block!]] [
 		if string? match [match: compose [(match) to end]]
 		all [
-			error? err: try test
+			error? set/any 'err try test
+			string? err/arg1
 			parse err/arg1 match
 		]
 	]
@@ -53,8 +54,9 @@ either system/version > 2.100.0 [; Rebol3
 	user-error: funct [match [string! block!] test [block!]] [
 		if string? match [match: compose [(match) to end]]
 		all compose [
-			error? err: try test
+			error? set/any 'err try test
 			err: disarm err
+			string? err/arg1
 			parse/all err/arg1 match
 		]
 	]

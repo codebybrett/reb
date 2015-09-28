@@ -198,7 +198,7 @@ using-tree-content: funct [
 
 		if empty? at node 4 [
 			content: copy/part node/3/position node/3/length
-			append node/3 compose [content (content)]
+			append node/3 compose/only [content (content)]
 		]
 		remove/part find node/3 'position 2
 		remove/part find node/3 'length 2

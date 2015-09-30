@@ -32,6 +32,7 @@ REBOL [
 		1.5.1 [31-Aug-2015 "Fix parsing-unless and optimise for Rebol 3." "Brett Handley"]
 		1.6.0 [7-Sep-2015 "Add parsing-earliest and parsing-matched." "Brett Handley"]
 		1.7.0 [12-Sep-2015 "Optimise parsing-when for Rebol 3." "Brett Handley"]
+		1.8.0 [30-Sep-2015 "Add /only and /once to parsing-rewrite." "Brett Handley"]
 	]
 ]
 
@@ -363,6 +364,8 @@ parsing-matched: funct [
 parsing-rewrite: funct [
 	{Creates a rule that rewrites the input according to patterns and productions. }
 	rules [block!] {Rewriting rules in pairs of Pattern (parse rule) and Production (a compose block).}
+	/once {Only one full top down search and replace pass is performed.}
+	/only {Replacements are not reprocessed in the same pass.}
 ] [
 
 	use [rules* prod p1 p2][
@@ -378,12 +381,17 @@ parsing-rewrite: funct [
 		]
 		remove back tail rules*
 
-		; Note how the rules are repeatedly applied top down.
+		edit: either only [
+			quote (p1: change/part p1 prod p2)
+		][
+			quote (change/part p1 prod p2)
+		]
 
-		compose/only [ some (
-			parsing-deep/all [p1: rules* p2: (change/part p1 prod p2 :p1)]
-		)]
+		rule: parsing-deep/all compose/only [p1: rules* p2: (edit) :p1]
 
+		either once [rule][
+			compose/only [some (rule)]
+		]
 	]
 ]
 

@@ -8,6 +8,7 @@ REBOL [
 	Author: "Gabriele Santilli"
 	EMail: giesse@rebol.it
 	License: {
+
         Copyright (c) 2006, Gabriele Santilli
         All rights reserved.
 
@@ -44,7 +45,7 @@ REBOL [
         POSSIBILITY OF SUCH DAMAGE.
     }
 	Date: 23-Aug-2015
-	Version: 2.0.0
+	Version: 2.2.0
 	History: [
 		17-May-2006 1.1.0 "History start"
 		17-May-2006 1.2.1 "First version"
@@ -55,6 +56,8 @@ REBOL [
 		23-Aug-2015 2.1.0 {Add DEBUG keyword for tracing rewrites (place before search pattern).
                                Replace /trace with /pause. [Brett Handley]}
 		25-Sep-2015 2.1.1 {File name changed to rewrite.reb. [Brett Handley]}
+		30-Sep-2015 2.2.0 {Rewrite/once specifies a single pass.
+		                   Rewrite/only prevents reprocessing of a replacement in same pass. [Brett Handley]}
 	]
 ]
 
@@ -62,11 +65,25 @@ REBOL [
 ;
 ; Search
 ;
-;	Deep search using parse rule.
+;	Deep search (depth first) using parse rule.
 ;
 ; Rewrite
 ;
 ;	Rewrite text or block (recursively) using search pattern as parse rule and replacemnt as compose block.
+;
+;	By default, repeatedly does a top down search and replace until no more occurrences are found.
+;
+;	Use /once to single top down search and replace pass.
+;
+;	Use /only to prevent a replacement being immediately reprocessed by continuing the search after the
+;	replacement. The replacement will be reprocessed in the next pass.
+;
+;	By combining /once and /only replacements can be made that would ordinarily cause an infinite loop.
+;	E.g:
+;
+;		rewrite [x] [ ['x][y] ['y]['x]] ; Causes an infinite loop.
+;
+;		rewrite/once/only [x] [ ['x][y] ['y]['x]] ; Once replacement only.
 ;
 ;	Place the word DEBUG before each search pattern you want debugged.
 ;
@@ -175,10 +192,12 @@ rewrite: func [
 	"Apply a list of rewrite rules to data"
 	data [block! string!] "Data to change"
 	rules [block!] "List of rewrite rules"
-	/pause "Pause rewriting process at each pass." pause-body [block!] {Evaluate at each pause.}
 	/debug {Override default debug function.} debug-fn [function!] {Takes a single argument.}
+	/once {Only one full top down search and replace pass is performed.}
+	/only {Replacements are not reprocessed in the same pass.}
+	/pause "Pause rewriting process at each pass." pause-body [block!] {Evaluate at each pause.}
 	/local
-	rules* replace mk1 mk2 event pattern production dbg do-debug
+	rules* replace mk1 mk2 event pattern production dbg do-debug process edit
 ] [
 	if empty? rules [return data]
 	if not debug [
@@ -213,9 +232,19 @@ rewrite: func [
 		]
 	]
 	remove back tail rules*
-	until [
-		if pause [do pause-body ask "? "]
-		not search/all data [mk1: rules* mk2: (do event change/part mk1 replace mk2) :mk1]
+
+	process: either once [:do][:until]
+
+	edit: either only [
+		quote (do event mk1: change/part mk1 replace mk2)
+	][
+		quote (do event change/part mk1 replace mk2)
 	]
+
+	process [
+		if pause [do pause-body ask "? "]
+		not search/all data [mk1: rules* mk2: edit :mk1]
+	]
+
 	data
 ]

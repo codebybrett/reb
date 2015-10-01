@@ -18,51 +18,51 @@ script-needs [
 ]
 
 decode-lines: funct [
-	{Decode string from prefixed lines e.g. comments (modifies).}
-	string [string!]
+	{Decode text previously encoded using a line prefix e.g. comments (modifies).}
+	text [string!]
 	line-prefix [string!] {Usually "**" or "//".}
 	indent [string!] {Usually "  ".}
 ] [
-	if not parse/all string [any [line-prefix thru newline]][
+	if not parse/all text [any [line-prefix thru newline]][
 		do make error! reform [{decode-lines expects each line to begin with} mold line-prefix { and finish with a newline.}]
 	]
-	insert string newline
-	replace/all string join newline line-prefix newline
+	insert text newline
+	replace/all text join newline line-prefix newline
 	if not empty? indent [
-		replace/all string join newline indent newline
+		replace/all text join newline indent newline
 	]
-	remove string
-	remove back tail string
-	string
+	remove text
+	remove back tail text
+	text
 ]
 
 encode-lines: func [
-	{Encode block into prefixed lines (e.g. comments).}
-	string [string!]
+	{Encode text using a line prefix (e.g. comments).}
+	text [string!]
 	line-prefix [string!] {Usually "**" or "//".}
 	indent [string!] {Usually "  ".}
-	/local text bol pos
+	/local bol pos
 ] [
 
 	; Note: Preserves newline formatting of the block.
 
 	; Encode newlines.
-	replace/all string newline rejoin [newline line-prefix indent]
+	replace/all text newline rejoin [newline line-prefix indent]
 
-	; Indent head if original string did not start with a newline.
-	pos: insert string line-prefix
+	; Indent head if original text did not start with a newline.
+	pos: insert text line-prefix
 	if not equal? newline pos/1 [insert pos indent]
 
 	; Clear indent from tail if present.
-	if indent = pos: skip tail string 0 - length? indent [clear pos]
-	append string newline
+	if indent = pos: skip tail text 0 - length? indent [clear pos]
+	append text newline
 
-	string
+	text
 ]
 
 load-until-blank: funct [
-	{Load rebol values from string until double newline.}
-	string [string!]
+	{Load rebol values from text until double newline.}
+	text [string!]
 	/next {Return values and next position.}
 ][
 
@@ -83,8 +83,8 @@ load-until-blank: funct [
 		opt [1 2 newline] position: to end
 	]
 
-	if parse/all string rule [
-		values: load copy/part string position
+	if parse/all text rule [
+		values: load copy/part text position
 		reduce [values position]
 	]
 ]

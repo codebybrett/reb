@@ -18,8 +18,8 @@ script-needs [
 ]
 
 load-until-blank: funct [
-	{Load rebol values from string until double newline.}
-	string [string!]
+	{Load rebol values from text until double newline.}
+	text [string!]
 	/next {Return values and next position.}
 ][
 
@@ -40,8 +40,8 @@ load-until-blank: funct [
 		opt wsp opt [1 2 newline] position: to end
 	]
 
-	if parse/all string rule [
-		values: load copy/part string position
+	if parse/all text rule [
+		values: load copy/part text position
 		reduce [values position]
 	]
 ]

@@ -57,7 +57,31 @@ encode-lines: func [
 	text
 ]
 
-line-exceeds: funct [
+foreach-line: func [
+	{Iterate over text lines.}
+	'record [word!] {Word set to metadata for each line.}
+	text [string!] {Text with lines.}
+	body [block!] {Block to evaluate each time.}
+	/local eol
+] [
+
+	set/any 'result while [not tail? text] [
+
+		eol: any [
+			find text newline
+			tail text
+		]
+
+		set record compose [position (text) length (subtract index? eol index? text)]
+		text: next eol
+
+		do body
+	]
+
+	get/any 'result
+]
+
+lines-exceeding: funct [
 	{Return the line numbers of lines exceeding line-length}
 	line-length [integer!]
 	text [string!]

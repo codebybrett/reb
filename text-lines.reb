@@ -57,3 +57,20 @@ encode-lines: func [
 	text
 ]
 
+line-of: funct [
+	{Returns line number of position within text.}
+	text [string!]
+	position [string! integer!]
+] [
+
+	if integer? position [
+		position: at text position
+	]
+
+	parse/all copy/part text next position [
+		any [to newline skip (line: 1 + any [line 0])]
+		skip (line: 1 + any [line 0]) to end
+	]
+
+	line
+]

@@ -36,8 +36,17 @@ decode-lines-test: requirements 'decode-lines [
 	[quote {x^/  y^/    z} = decode-lines {**  x^/**    y^/**      z^/} {**} {  } ]
 ]
 
+line-of-test: requirements 'line-of [
+
+	[none? line-of {} 0]
+	[1 = line-of {x} 1]
+	[1 = line-of {x^/} 2]
+	[2 = line-of {x^/y} 3]
+]
+
 requirements %text-lines.reb [
 
 	['passed = last encode-lines-test]
 	['passed = last decode-lines-test]
+	['passed = last line-of-test]
 ]

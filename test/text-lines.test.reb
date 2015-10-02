@@ -36,6 +36,14 @@ decode-lines-test: requirements 'decode-lines [
 	[quote {x^/  y^/    z} = decode-lines {**  x^/**    y^/**      z^/} {**} {  } ]
 ]
 
+line-exceeds-test: requirements 'line-exceeds [
+
+	[none? line-exceeds 0 {}]
+	[none? line-exceeds 1 {}]
+	[[1] = line-exceeds 0 {x}]
+	[[2] = line-exceeds 0 {^/x}]
+]
+
 line-of-test: requirements 'line-of [
 
 	[none? line-of {} 0]
@@ -48,5 +56,6 @@ requirements %text-lines.reb [
 
 	['passed = last encode-lines-test]
 	['passed = last decode-lines-test]
+	['passed = last line-exceeds-test]
 	['passed = last line-of-test]
 ]

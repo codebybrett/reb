@@ -20,7 +20,7 @@ decode-lines: funct [
 	line-prefix [string!] {Usually "**" or "//".}
 	indent [string!] {Usually "  ".}
 ] [
-	if not parse/all text [any [line-prefix thru newline]][
+	if not parse/all text [any [line-prefix thru newline]] [
 		do make error! reform [{decode-lines expects each line to begin with} mold line-prefix { and finish with a newline.}]
 	]
 	insert text newline
@@ -57,6 +57,29 @@ encode-lines: func [
 	text
 ]
 
+line-exceeds: funct [
+	{Return the line numbers of lines exceeding line-length}
+	line-length [integer!]
+	text [string!]
+] [
+
+	count-line: [
+		(
+			line: 1 + any [line 0]
+			if line-length < subtract index? eol index? bol [
+				length-exceeded: append any [length-exceeded copy []] line
+			]
+		)
+	]
+
+	parse/all text [
+		any [bol: to newline eol: skip count-line]
+		bol: skip to end eol: count-line
+	]
+
+	length-exceeded
+]
+
 line-of: funct [
 	{Returns line number of position within text.}
 	text [string!]
@@ -67,9 +90,10 @@ line-of: funct [
 		position: at text position
 	]
 
+	count-line: [(line: 1 + any [line 0])]
+
 	parse/all copy/part text next position [
-		any [to newline skip (line: 1 + any [line 0])]
-		skip (line: 1 + any [line 0]) to end
+		any [to newline skip count-line] skip count-line
 	]
 
 	line

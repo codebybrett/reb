@@ -1,20 +1,17 @@
 REBOL [
-	Title: "Line Encoded Blocks"
+	Title: "Text Lines"
 	Version: 1.0.0
 	Rights: {
 		Copyright 2015 Brett Handley
+
+		Rebol3 load-next by Chris Ross-Gill.
 	}
 	License: {
 		Licensed under the Apache License, Version 2.0
 		See: http://www.apache.org/licenses/LICENSE-2.0
 	}
 	Author: "Brett Handley"
-	Purpose: {Encode and Decode Rebol blocks across formatted lines.}
-]
-
-script-needs [
-	%load-next.reb
-	%parse-kit.reb
+	Purpose: {Transition load/next from Rebol 2 to Rebol 3.}
 ]
 
 decode-lines: funct [
@@ -58,54 +55,5 @@ encode-lines: func [
 	append text newline
 
 	text
-]
-
-load-until-blank: funct [
-	{Load rebol values from text until double newline.}
-	text [string!]
-	/next {Return values and next position.}
-][
-
-	wsp: compose [some (charset { ^-})]
-
-	rebol-value: parsing-at x [
-		res: any [attempt [load-next x] []]
-		if not empty? res [second res]
-	]
-
-	terminator: [opt wsp newline opt wsp newline]
-
-	not-terminator: parsing-unless terminator
-	; Could be replaced with Not in Rebol 3 parse.
-
-	rule: [
-		some [not-terminator rebol-value]
-		opt [1 2 newline] position: to end
-	]
-
-	if parse/all text rule [
-		values: load copy/part text position
-		reduce [values position]
-	]
-]
-
-mold-contents: func [
-	{Mold block without the outer brackets (a little different to MOLD/ONLY).}
-	block [block! paren!]
-	/local string bol
-][
-
-	string: mold block
-
-	either parse/all string [
-		skip copy bol [newline some #" "] to end
-	][
-		replace/all string bol newline
-	][
-	]
-	remove string
-	take/last string
-
-	string
 ]
 

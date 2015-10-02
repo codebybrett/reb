@@ -1,5 +1,5 @@
 REBOL [
-	Title: "Line Encoded Blocks - Tests"
+	Title: "Text Lines - Tests"
 	Version: 1.0.0
 	Rights: {
 		Copyright 2015 Brett Handley
@@ -13,7 +13,7 @@ REBOL [
 
 script-needs [
 	%requirements.reb
-	%../line-encoded-blocks.reb
+	%../text-lines.reb
 ]
 
 encode-lines-test: requirements 'encode-lines [
@@ -36,7 +36,7 @@ decode-lines-test: requirements 'decode-lines [
 	[quote {x^/  y^/    z} = decode-lines {**  x^/**    y^/**      z^/} {**} {  } ]
 ]
 
-requirements %line-encoded-blocks.reb [
+requirements %text-lines.reb [
 
 	['passed = last encode-lines-test]
 	['passed = last decode-lines-test]

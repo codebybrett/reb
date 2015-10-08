@@ -97,18 +97,20 @@ env: context [
 		failed: make block! []
 
 		read-script: func [fullpath][
+
 			if not find failed fullpath [
 				script: context compose [
 					id: (name)
 					file: (fullpath)
 					text: attempt [
 						append failed fullpath
-						log [read (fullpath)]
+						log [attempt-read (fullpath)]
 						read fullpath
 					]
 					time: now/precise
 				]
 			]
+
 			script/text
 		]
 
@@ -116,7 +118,9 @@ env: context [
 
 			; Search for file if not already used.
 
-			if not find scripts/used name [
+			either cached: find scripts/used name [
+				log [already-used (name)]
+			][
 
 				any [
 					read-script name
@@ -132,6 +136,13 @@ env: context [
 			read-script pattern
 		]
 
+		if all [
+			not cached
+			none? script/text
+		] [
+			do make error! reform [{Could not retrieve} mold pattern]
+		]
+
 		script
 	]
 
@@ -145,8 +156,7 @@ env: context [
 		either script [
 
 			file: clean-path script/file
-			log [run true (search-file)]
-
+			log [run (search-file)]
 			do script/text
 			def: compose [
 				file (script/file)
@@ -158,7 +168,7 @@ env: context [
 			new-line position true
 		][
 
-			log [run false (search-file)]
+			log [not-run (search-file)]
 		]
 
 		file
@@ -178,7 +188,7 @@ script-needs: funct [
 			pos: (pred: true) opt [set pred block! (pred: env/conditions? pred)]
 			set script [file! | url!] (if pred [env/run :script])
 		]
-	] [make error! rejoin [{Could not parse script-needs near: } copy/part pos 40]]
+	] [do make error! rejoin [{Could not parse script-needs near: } copy/part pos 40]]
 ]
 
 env/base

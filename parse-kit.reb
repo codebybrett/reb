@@ -284,15 +284,15 @@ parsing-earliest: funct [
 
 			if not empty? list [
 
-				min: index? pos: list/1
+				min: index-of pos: list/1
 				list: next list
 				while [not tail? list] [
 					if list/1 [
 						if not same? head pos head list/1 [
 							do make error! {Can only compare rule positions for the same series.}
 						]
-						if lesser? index? list/1 min [
-							min: index? pos: list/1
+						if lesser? index-of list/1 min [
+							min: index-of pos: list/1
 						]
 					]
 					list: next list
@@ -346,8 +346,8 @@ parsing-matched: funct [
 
 	use [result positions position start] [
 		collect [
-			keep compose/only [(to paren! compose [positions: array (length? rules)]) start:]
-			for i 1 length? rules 1 [
+			keep compose/only [(to paren! compose [positions: array (length rules)]) start:]
+			for i 1 length rules 1 [
 				keep compose/deep/only [
 					:start (to paren! [position: none]) opt [(:rules/:i) position:] (to paren! compose [poke positions (i) position])
 				]
@@ -568,7 +568,7 @@ on-parsing: funct [
 			def: pre-rule-action/position :def [] 'event.at
 
 			def: post-rule-action/position :def compose/deep [
-				event reduce [(to lit-word! :rule) subtract index? :event.end index? :event.at :event.at]
+				event reduce [(to lit-word! :rule) subtract index-of :event.end index-of :event.at :event.at]
 			] 'event.end
 
 		] [
@@ -657,7 +657,7 @@ get-parse: funct [
 
 			either matched [
 
-				length: subtract index? position index? output/1/3/position ; Length
+				length: subtract index-of position index-of output/1/3/position ; Length
 				append output/1/3 reduce ['length length]
 
 				output: next output ; Accept tree node.
@@ -695,7 +695,7 @@ get-parse: funct [
 
 				if matched [
 
-					length: subtract index? position index? start-position ; Length
+					length: subtract index-of position index-of start-position ; Length
 					position: start-position ; Input position
 
 					output: insert/only output reduce [name output compose/only [type terminal position (position) length (length)]]

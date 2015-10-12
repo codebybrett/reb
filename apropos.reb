@@ -24,7 +24,7 @@ apropos: func [
 	/only {Evaluate the path only, not each segment of the path.}
 ] [
 
-	switch/default type?/word :reference [
+	switch/default type-of/word :reference [
 
 		object! [
 			bind body reference
@@ -36,7 +36,7 @@ apropos: func [
 
 		path! [
 			if not only [
-				for i 1 (subtract length? reference 1) 1 [
+				for i 1 (subtract length reference 1) 1 [
 					bind body evaluate-path copy/part reference i
 				]
 			]

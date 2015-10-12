@@ -51,7 +51,7 @@ encode-lines: func [
 	if not equal? newline pos/1 [insert pos indent]
 
 	; Clear indent from tail if present.
-	if indent = pos: skip tail text 0 - length? indent [clear pos]
+	if indent = pos: skip tail text 0 - length indent [clear pos]
 	append text newline
 
 	text
@@ -72,7 +72,7 @@ foreach-line: func [
 			tail text
 		]
 
-		set record compose [position (text) length (subtract index? eol index? text)]
+		set record compose [position (text) length (subtract index-of eol index-of text)]
 		text: next eol
 
 		do body
@@ -90,7 +90,7 @@ lines-exceeding: funct [
 	count-line: [
 		(
 			line: 1 + any [line 0]
-			if line-length < subtract index? eol index? bol [
+			if line-length < subtract index-of eol index-of bol [
 				length-exceeded: append any [length-exceeded copy []] line
 			]
 		)

@@ -33,12 +33,13 @@ REBOL [
 ;	* Refresh file from url other than reb. Need a manifest?
 ;
 
+do %r2r3-future.r
 
 env: context [
 
 	master: https://raw.githubusercontent.com/codebybrett/reb/master/
 
-	base: either find [url!] type?/word system/script/args [
+	base: either find [url!] type-of/word system/script/args [
 		system/script/args
 	][
 		what-dir

@@ -21,7 +21,7 @@ either system/version > 2.100.0 [; Rebol3
 		string [string!]
 	] [
 		out: transcode/next to binary! string
-		out/2: skip string subtract length? string length? to string! out/2
+		out/2: skip string subtract length string length to string! out/2
 		out
 	] ; by @rgchris.
 

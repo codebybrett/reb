@@ -21,7 +21,7 @@ decode-lines: funct [
 	indent [string!] {Usually "  ".}
 ] [
 	if not parse/all text [any [line-prefix thru newline]] [
-		do make error! reform [{decode-lines expects each line to begin with} mold line-prefix { and finish with a newline.}]
+		fail [{decode-lines expects each line to begin with} (mold line-prefix) { and finish with a newline.}]
 	]
 	insert text newline
 	replace/all text join newline line-prefix newline

@@ -290,7 +290,7 @@ parsing-earliest: funct [
 				while [not tail? list] [
 					if list/1 [
 						if not same? head pos head list/1 [
-							do make error! {Can only compare rule positions for the same series.}
+							fail {Can only compare rule positions for the same series.}
 						]
 						if lesser? index-of list/1 min [
 							min: index-of pos: list/1
@@ -315,7 +315,7 @@ parsing-expression: funct [
 ] [
 	use [value rest] [
 		rule: funct [x][
-			if not word? :x [make error! {expression symbol must be a word!}]
+			if not word? :x [fail {expression symbol must be a word!}]
 			x: to lit-word! :x
 			compose/deep/only [(:x) | (parsing-when [path!]) into [(:x) to end]]
 		]

@@ -141,7 +141,7 @@ env: context [
 			not cached
 			none? script/text
 		] [
-			do make error! reform [{Could not retrieve} mold pattern]
+			fail [{Could not retrieve} (mold pattern)]
 		]
 
 		script
@@ -189,7 +189,9 @@ script-needs: funct [
 			pos: (pred: true) opt [set pred block! (pred: env/conditions? pred)]
 			set script [file! | url!] (if pred [env/run :script])
 		]
-	] [do make error! rejoin [{Could not parse script-needs near: } copy/part pos 40]]
+	] [
+		fail [{Could not parse script-needs near:} (copy/part pos 40)]
+	]
 ]
 
 env/base

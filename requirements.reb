@@ -72,7 +72,7 @@ requirements: funct [
 	results: new-line/all/skip collect [
 		foreach test block [
 			if not block? test [
-				do make error! reform [{Test must be a block. Got: } mold test]
+				fail [{Test must be a block. Got: } (mold test)]
 			]
 			value: none
 			error? set/any 'value try bind test 'throws-error

@@ -45,7 +45,7 @@ apropos: func [
 
 		word! [bind body do reference]
 
-	] [do make error! {APROPOS only accepts simple references to contexts.}]
+	] [fail {APROPOS only accepts simple references to contexts.}]
 
 	either binding [body] [do body]
 ]

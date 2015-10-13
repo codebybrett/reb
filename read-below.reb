@@ -6,6 +6,7 @@ Rebol [
 	Version: 1.3.1
 	Author: "Brett Handley"
 	History: [
+		1.4.0 [13-Oct-2015 {Use FAIL instead of making error directly.}
 		1.3.1 [12-Nov-2013 {Added read-below-paths} "Brett Handley"]
 		1.3.0 [11-May-2013 {Changed to work with REBOL 3 Alpha.} "Brett Handley"]
 		1.2.0 [25-Sep-2011 {Changed behaviour of /exclude. Was still including top level of excluded directors, no longer doing that.} "Brett Handley"]
@@ -58,7 +59,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 read-below: func [
 	{Read all directories below and including a given file path.}
-	[catch throw]
 	path [file! url!] "Must be a directory (ending in a trailing slash)."
 	/exclude exclude-files [file! url! block!] "Directories/files to be excluded from recursion/result."
 	/foreach "Evaluates a block for each file or directory found."
@@ -69,7 +69,7 @@ read-below: func [
 	*foreach: get bind 'foreach 'do
 
 	if #"/" <> last path [
-		throw make error! "read-below expected path to have trailing slash."
+		fail "read-below expected path to have trailing slash."
 	]
 
 	exclude-files: compose [(any [exclude-files []])]

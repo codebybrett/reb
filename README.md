@@ -28,6 +28,11 @@ If you want your base to be a webservice use
 SCRIPT-NEEDS declares the required files for a script and internally uses
 ENV to find and DO those files.
 
+### Note ###
+
+Scripts here are written with the Ren/C project in mind and may use the
+ren/c future bridge r2r3-future.r.
+
 ### License ###
 
 If not otherwise specified for a file, files in this directory and

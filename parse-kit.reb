@@ -33,6 +33,7 @@ REBOL [
 		1.6.0 [7-Sep-2015 "Add parsing-earliest and parsing-matched." "Brett Handley"]
 		1.7.0 [12-Sep-2015 "Optimise parsing-when for Rebol 3." "Brett Handley"]
 		1.8.0 [30-Sep-2015 "Add /only and /once to parsing-rewrite." "Brett Handley"]
+		1.9.0 [12-Oct-2015 "Modify to use r2r3-future.r (Ren/C future bridge)." "Brett Handley"]
 	]
 ]
 

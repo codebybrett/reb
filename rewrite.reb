@@ -5,7 +5,7 @@ REBOL [
         Implements a structure matching and rewriting engine using
         PARSE.
     }
-	Author: "Gabriele Santilli"
+	Author: ["Gabriele Santilli" "Brett Handley"]
 	EMail: giesse@rebol.it
 	License: {
 
@@ -44,8 +44,8 @@ REBOL [
         ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
         POSSIBILITY OF SUCH DAMAGE.
     }
-	Date: 23-Aug-2015
-	Version: 2.2.0
+	Date: 13-Oct-2015
+	Version: 2.3.0
 	History: [
 		17-May-2006 1.1.0 "History start"
 		17-May-2006 1.2.1 "First version"
@@ -58,6 +58,7 @@ REBOL [
 		25-Sep-2015 2.1.1 {File name changed to rewrite.reb. [Brett Handley]}
 		30-Sep-2015 2.2.0 {Rewrite/once specifies a single pass.
 		                   Rewrite/only prevents reprocessing of a replacement in same pass. [Brett Handley]}
+		13-Oct-2015 2.3.0 {Modify to work with Ren/C future bridge (r2r3-future.r).}
 	]
 ]
 
@@ -88,7 +89,6 @@ REBOL [
 ;	Place the word DEBUG before each search pattern you want debugged.
 ;
 ; -------------------------------------------------------------------------------------------------------------
-
 
 either system/version > 2.100.0 [; R3
 
@@ -213,7 +213,7 @@ rewrite: func [
 		(:debug-fn) compose/deep/only [
 			target (copy/part mk1 mk2)
 			replace (replace)
-			length (subtract index? mk2 index? mk1)
+			length (subtract index-of mk2 index-of mk1)
 			position (mk1)
 		]
 	]

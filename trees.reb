@@ -24,6 +24,9 @@ REBOL [
 ;
 ; ---------------------------------------------------------------------------------------------------------------------
 
+script-needs [
+	%r2r3-future.r
+]
 
 visit-tree: func [
 	{Evaluates a tree. RECURSE and MAP-NODES recursively process child nodes.}
@@ -228,7 +231,7 @@ infill-trees: funct [
 
 			if all [
 				same? head position head start ; Might be different blocks.
-				positive? length: subtract index? start index? position
+				positive? length: subtract index-of start index-of position
 			] [
 				fill-node: compose/only [
 					(word) none (

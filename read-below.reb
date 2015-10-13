@@ -6,7 +6,7 @@ Rebol [
 	Version: 1.3.1
 	Author: "Brett Handley"
 	History: [
-		1.4.0 [13-Oct-2015 {Use FAIL instead of making error directly.}
+		1.4.0 [13-Oct-2015 {Use FAIL instead of making error directly.}]
 		1.3.1 [12-Nov-2013 {Added read-below-paths} "Brett Handley"]
 		1.3.0 [11-May-2013 {Changed to work with REBOL 3 Alpha.} "Brett Handley"]
 		1.2.0 [25-Sep-2011 {Changed behaviour of /exclude. Was still including top level of excluded directors, no longer doing that.} "Brett Handley"]

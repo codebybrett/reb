@@ -24,10 +24,6 @@ REBOL [
 ;
 ; ---------------------------------------------------------------------------------------------------------------------
 
-script-needs [
-	%r2r3-future.r
-]
-
 visit-tree: func [
 	{Evaluates a tree. RECURSE and MAP-NODES recursively process child nodes.}
 	tree [block!] {[value prop child1 child2 ...].}

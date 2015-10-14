@@ -33,7 +33,9 @@ REBOL [
 ;	* Refresh file from url other than reb. Need a manifest?
 ;
 
-do %r2r3-future.r
+if not value? 'fail [
+	do %r2r3-future.r
+]
 
 env: context [
 

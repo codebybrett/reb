@@ -91,9 +91,9 @@ unless value? 'fail [
 							not any-function? get :item
 						]
 					][
-						do make error! (
-							"FAIL requires complex expressions to be in a PAREN!"
-						)
+						do make error! rejoin [
+							"FAIL requires complex expressions to be in a PAREN! item: " mold item
+						]
 					]
 				]
 				do make error! form reduce reason

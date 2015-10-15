@@ -108,7 +108,7 @@ env: context [
 					text: attempt [
 						append failed fullpath
 						log [attempt-read (fullpath)]
-						read fullpath
+						to string! read fullpath
 					]
 					time: now/precise
 				]
@@ -141,7 +141,7 @@ env: context [
 
 		if all [
 			not cached
-			none? script/text
+			not string? script/text
 		] [
 			fail [{Could not retrieve} (mold pattern)]
 		]
@@ -158,8 +158,15 @@ env: context [
 
 		either script [
 
+			if any [
+				not string? script/text
+				empty? script/text
+			][
+				fail [{Invalid script/text for} search-file]
+			]
+
 			file: clean-path script/file
-			log [run (search-file)]
+			log [run (file)]
 			do script/text
 			def: compose [
 				file (script/file)

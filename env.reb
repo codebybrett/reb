@@ -61,7 +61,7 @@ env: context [
 		] [
 
 			files: read base
-			remove-each file files [not parse/all file [thru %.reb | thru %.r]]
+			remove-each file files [not parse/all file [thru ".reb" | thru ".r"]]
 
 			foreach file files [
 				either text: attempt [read location: master/:file][

@@ -63,9 +63,15 @@ read-below: func [
 	/foreach "Evaluates a block for each file or directory found."
 	'word [word!] "Word set to each file or directory."
 	body [block!] "Block to evaluate for each file or directory."
-	/local queue file-list result file do-func *foreach
+	/trace {Logs each folder read.}
+	/local queue file-list result file do-func *foreach files folder log
 ] [
+
 	*foreach: get bind 'foreach 'do
+
+	log: if trace [
+		func [message] [print mold compose/only message]
+	]
 
 	if #"/" <> last path [
 		fail "read-below expected path to have trailing slash."
@@ -85,6 +91,7 @@ read-below: func [
 
 	; Initialise queue
 	queue: read path
+	log [folder (path) (length queue)]
 
 	; Process queue
 	set/any 'result if not empty? queue [
@@ -94,7 +101,9 @@ read-below: func [
 			if not find exclude-files file [
 				do-func file
 				if #"/" = last file [
-					*foreach f read join path file [insert queue join file f]
+					files: read folder: join path file
+					log [folder (folder) (length files)]
+					*foreach f files [insert queue join file f]
 					queue: head queue
 				]
 			]

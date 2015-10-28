@@ -16,7 +16,7 @@ REBOL [
 
 either system/version > 2.100.0 [; Rebol3
 
-	load-next: funct [
+	load-next: function [
 		{Load the next value. Return block with value and new position.}
 		string [string!]
 	] [
@@ -27,7 +27,7 @@ either system/version > 2.100.0 [; Rebol3
 
 ] [; Rebol2
 
-	load-next: funct [
+	load-next: function [
 		{Load the next value. Return block with value and new position.}
 		string [string!]
 	] [

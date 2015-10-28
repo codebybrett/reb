@@ -17,7 +17,7 @@ script-needs [
 	%parse-kit.reb
 ]
 
-load-until-blank: funct [
+load-until-blank: function [
 	{Load rebol values from text until double newline.}
 	text [string!]
 	/next {Return values and next position.}

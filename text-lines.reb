@@ -14,7 +14,7 @@ REBOL [
 	Purpose: {Transition load/next from Rebol 2 to Rebol 3.}
 ]
 
-decode-lines: funct [
+decode-lines: function [
 	{Decode text previously encoded using a line prefix e.g. comments (modifies).}
 	text [string!]
 	line-prefix [string!] {Usually "**" or "//".}

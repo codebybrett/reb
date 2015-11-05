@@ -27,7 +27,7 @@ REBOL [
 visit-tree: func [
 	{Evaluates a tree. RECURSE and MAP-NODES recursively process child nodes.}
 	tree [block!] {[value prop child1 child2 ...].}
-	'arg [word! block!] {Word set to each node (local). Can be FUNCT spec. Optional second argument is accumulator.}
+	'arg [word! block!] {Word set to each node (local). Can be function spec. Optional second argument is accumulator.}
 	body [block!] {Block to evaluate. Call VISIT on each child node to visit. Set-words are local by default.}
 	/initial value {Initial value.}
 	/extern other-words [block!] {These words are not local.}
@@ -38,7 +38,7 @@ visit-tree: func [
 
 	use [visit] [
 
-		visit: funct arg compose/deep [
+		visit: function arg compose/deep [
 
 			map-nodes: func [/count {Map first n nodes.} n [integer!]][
 				either count [
@@ -57,7 +57,7 @@ visit-tree: func [
 	]
 ]
 
-prettify-tree: funct [
+prettify-tree: function [
 	{Make the tree pretty.}
 	tree [block!] {[value properties child1 child2 ...]}
 ][
@@ -71,7 +71,7 @@ prettify-tree: funct [
 	tree
 ]
 
-update-parents: funct [
+update-parents: function [
 	{Updates tree parent references.}
 	tree [block!] {[value properties child1 child2 ...]}
 	/parent node [none! block!]
@@ -87,7 +87,7 @@ update-parents: funct [
 	tree
 ]
 
-remove-parents: funct [
+remove-parents: function [
 	{Remove parents from a tree [node-type parent properties child1 child2 ...].}
 	tree [block!]
 ][
@@ -100,7 +100,7 @@ remove-parents: funct [
 	tree
 ]
 
-add-parents: funct [
+add-parents: function [
 	{Modify structure [value properties child1 child2 ...] to restore parents to a tree.}
 	block [block!]
 	/parent node [none! block!] {Specify parent node.}
@@ -118,7 +118,7 @@ add-parents: funct [
 	block
 ]
 
-cut-child: funct [
+cut-child: function [
 	{Replaces node at position with it's children.}
 	position [block!] {[[value prop child1 child2 ...] ...]}
 ][
@@ -130,7 +130,7 @@ cut-child: funct [
 ]
 
 ; TODO: Not yet tried.
-cut-each: funct [
+cut-each: function [
 	{Replaces each child that meet condition with it's children.}
 	'word [word!] {Set to state each time.}
 	position [block!] {[[value prop child1 child2 ...] ...]}
@@ -165,7 +165,7 @@ cut-each: funct [
 ; TODO: Need review and a better name.
 ; Think through this and related simple operations.
 
-cut-tree: funct [
+cut-tree: function [
 	{Replaces node with its children if condition is satisfied.}
 	tree [block!] {A block of trees [value prop child1 child2 ...].}
 	condition [block!] {Child POSITION in parent is bound.}
@@ -188,7 +188,7 @@ cut-tree: funct [
 ]
 
 ; TODO: Review. Possibly should not be part of this file (should handle get-parse literals optimially)
-using-tree-content: funct [
+using-tree-content: function [
 	{Replace properties position and length with contents.}
 	tree [block!] {A block of trees [value prop child1 child2 ...].}
 ] [
@@ -210,7 +210,7 @@ using-tree-content: funct [
 
 
 ; TODO: Change to tree. Get working. Use update-parents.
-infill-trees: funct [
+infill-trees: function [
 	{Fills content gaps with new nodes. Nodes require properties position [series!] and length [integer!].}
 	trees [block!] {[value properties child1 child2 ...] ...}
 	word [word!] {Name of the filler tree nodes.}

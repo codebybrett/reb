@@ -124,7 +124,7 @@ read-below: func [
 ]
 
 
-read-below-paths: funct [
+read-below-paths: function [
 	paths [block!]
 ][
 	collect [

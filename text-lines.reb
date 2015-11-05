@@ -81,7 +81,7 @@ foreach-line: func [
 	get/any 'result
 ]
 
-lines-exceeding: funct [
+lines-exceeding: function [
 	{Return the line numbers of lines exceeding line-length}
 	line-length [integer!]
 	text [string!]
@@ -104,7 +104,7 @@ lines-exceeding: funct [
 	length-exceeded
 ]
 
-line-of: funct [
+line-of: function [
 	{Returns line number of position within text.}
 	text [string!]
 	position [string! integer!]

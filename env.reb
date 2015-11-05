@@ -56,7 +56,7 @@ env: context [
 
 		used: make block! []
 
-		refresh: funct [
+		refresh: function [
 			{Attempt to refresh each script in base directory from master.}
 		] [
 
@@ -89,7 +89,7 @@ env: context [
 		view: found? find form system/product {view}
 	]
 
-	retrieve: funct [
+	retrieve: function [
 		{Retrieve a script.}
 		pattern [file! url!]
 	][
@@ -149,7 +149,7 @@ env: context [
 		script
 	]
 
-	run: funct [
+	run: function [
 		{Run a script.}
 		search-file [file! url!]
 	] [
@@ -187,7 +187,7 @@ env: context [
 ]
 
 
-script-needs: funct [
+script-needs: function [
 	{Runs each script listed. Accepts mulitple files. A block preceeding a file is a predicate to be evaluated by script-environment?.}
 	needs [file! block!]
 	/local script

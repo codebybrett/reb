@@ -23,7 +23,7 @@ REBOL [
 
 either system/version > 2.100.0 [; Rebol3
 
-	throws-error: funct [
+	throws-error: function [
 		condition [block!] {Bound to error object. Evaluated by ALL.}
 		test [block!]
 	] [
@@ -32,7 +32,7 @@ either system/version > 2.100.0 [; Rebol3
 		]
 	]
 
-	user-error: funct [match [string! block!] test [block!]] [
+	user-error: function [match [string! block!] test [block!]] [
 		if string? match [match: compose [(match) to end]]
 		all [
 			error? set/any 'err try test
@@ -42,7 +42,7 @@ either system/version > 2.100.0 [; Rebol3
 	]
 ] [; Rebol2
 
-	throws-error: funct [
+	throws-error: function [
 		condition [block!] {Bound to error object. Evaluated by ALL.}
 		test [block!]
 	] [
@@ -51,7 +51,7 @@ either system/version > 2.100.0 [; Rebol3
 		]
 	]
 
-	user-error: funct [match [string! block!] test [block!]] [
+	user-error: function [match [string! block!] test [block!]] [
 		if string? match [match: compose [(match) to end]]
 		all compose [
 			error? set/any 'err try test
@@ -63,7 +63,7 @@ either system/version > 2.100.0 [; Rebol3
 
 ]
 
-requirements: funct [
+requirements: function [
 	{Test requirements.}
 	about
 	block [block!] {Series of test blocks. A textual requirement begins the block (optional).}

@@ -15,7 +15,7 @@ either system/version > 2.100.0 [; R3
 
 	; Brett Handley: Create R3 version to guard the INTO.
 
-	set-words-of: funct [
+	set-words-of: function [
 		"Returns items in a block of type set-word!."
 		block [block!]
 		/deep {Recurse into blocks to find set-words.}
@@ -39,7 +39,7 @@ either system/version > 2.100.0 [; R3
 
 ] [
 
-	set-words-of: funct [
+	set-words-of: function [
 		"Returns items in a block of type set-word!."
 		block [block!]
 		/deep {Recurse into blocks to find set-words.}

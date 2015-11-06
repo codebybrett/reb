@@ -100,7 +100,7 @@ read-below: func [
 	log [folder (path) (new-line/all queue true)]
 
 	; Process queue
-	set/any 'result if not empty? queue [
+	set/any 'result to-value if not empty? queue [
 		until [
 			file: first queue
 			queue: remove queue

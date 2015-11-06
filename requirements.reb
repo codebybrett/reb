@@ -27,7 +27,7 @@ either system/version > 2.100.0 [; Rebol3
 		condition [block!] {Bound to error object. Evaluated by ALL.}
 		test [block!]
 	] [
-		if error? err: try test [
+		to-value if error? err: try test [
 			all bind/copy condition in err 'type
 		]
 	]
@@ -46,7 +46,7 @@ either system/version > 2.100.0 [; Rebol3
 		condition [block!] {Bound to error object. Evaluated by ALL.}
 		test [block!]
 	] [
-		if error? err: try test [
+		to-value if error? err: try test [
 			all bind/copy condition in disarm err 'type
 		]
 	]

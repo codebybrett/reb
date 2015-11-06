@@ -34,6 +34,7 @@ REBOL [
 		1.7.0 [12-Sep-2015 "Optimise parsing-when for Rebol 3." "Brett Handley"]
 		1.8.0 [30-Sep-2015 "Add /only and /once to parsing-rewrite." "Brett Handley"]
 		1.9.0 [12-Oct-2015 "Modify to use r2r3-future.r (Ren/C future bridge)." "Brett Handley"]
+		1.10.0 [16-Nov-2015 "Modify to work with Ren/C changes." "Brett Handley"]
 	]
 ]
 
@@ -69,7 +70,7 @@ REBOL [
 ;
 ;	parsing-matched
 ;
-;		Create a rule that evaluates a block of positions, one for each rule in a list.
+;		Create a rule that evaluates a block of positions, one for each matched rule in a list.
 ;
 ;	parsing-expression
 ;
@@ -124,7 +125,7 @@ REBOL [
 ;		Does not move input position.
 ;
 ;		Note: The resulting rule is not re-entrant because it has local variables
-;		      that are not created if the rule is re-entered.
+;		      that are not recreated if the rule is re-entered.
 ;
 ;		Example:
 ;
@@ -138,7 +139,7 @@ REBOL [
 ;		Does not move input position.
 ;
 ;		Note: The resulting rule is not re-entrant because it has local variables
-;		      that are not created if the rule is re-entered.
+;		      that are not recreated if the rule is re-entered.
 ;
 ;		Example:
 ;
@@ -189,9 +190,9 @@ parsing-at: func [
 	/end {Drop the default tail check (allows evaluation at the tail).}
 ] [
 	use [result position][
-		block: to paren! block
+		block: compose/only [to-value (to paren! block)]
 		if not end [
-			block: compose/deep/only [all [not tail? (word) (block)]]
+			block: compose/deep [all [not tail? (word) (block)]]
 		]
 		block: compose/deep [result: either position: (block) [[:position]][[end skip]]]
 		use compose [(word)] compose/deep [
@@ -279,11 +280,12 @@ parsing-earliest: function [
 ] [
 
 	use [pos min] [
+
 		parsing-matched list rules [
 
 			remove-each x list [none? x]
 
-			if not empty? list [
+			to-value if not empty? list [
 
 				min: index-of pos: list/1
 				list: next list
@@ -337,7 +339,7 @@ parsing-expression: function [
 ]
 
 parsing-matched: function [
-	{Create a rule that evaluates a block of positions, one for each rule in a list.}
+	{Create a rule that evaluates a block of positions, one for each matched rule in a list.}
 	'word [word!] {Word set to result positions of the rules (will be local).}
 	rules [block!] {Block of rules to match.}
 	block [block!] {Block to evaluate. Return next input position, or none/false.}

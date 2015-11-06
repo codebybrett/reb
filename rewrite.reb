@@ -137,7 +137,7 @@ either system/version > 2.100.0 [; R3
 				]]
 		]
 		parse data recurse
-		if result [result] ; Failure returns none.
+		to-value if result [result] ; Failure returns none.
 	]
 
 ] [
@@ -183,7 +183,7 @@ either system/version > 2.100.0 [; R3
 				]]
 		]
 		either case [parse/all/case data recurse] [parse/all data recurse]
-		if result [result] ; Failure returns none.
+		to-value if result [result] ; Failure returns none.
 	]
 
 ]

@@ -41,7 +41,7 @@ env: context [
 
 	master: https://raw.githubusercontent.com/codebybrett/reb/master/
 
-	base: either find [url!] type-of/word system/script/args [
+	base: either find [url!] to word! type-of system/script/args [
 		system/script/args
 	][
 		what-dir

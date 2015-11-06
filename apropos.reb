@@ -24,7 +24,7 @@ apropos: func [
 	/only {Evaluate the path only, not each segment of the path.}
 ] [
 
-	switch/default type-of/word :reference [
+	switch/default to word! type-of :reference [
 
 		object! [
 			bind body reference
@@ -43,7 +43,7 @@ apropos: func [
 			bind body evaluate-path reference
 		]
 
-		word! [bind body do reference]
+		word! [bind body get reference]
 
 	] [fail {APROPOS only accepts simple references to contexts.}]
 

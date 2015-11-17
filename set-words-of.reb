@@ -22,7 +22,7 @@ either system/version > 2.100.0 [; R3
 	] [
 
 		if not deep [
-			RETURN remove-each w copy block [not set-word? :w]
+			RETURN map-each w block [either set-word? :w [w][()]]
 		]
 
 		unique collect [

@@ -34,7 +34,7 @@ decode-lines: function [
 ]
 
 encode-lines: func [
-	{Encode text using a line prefix (e.g. comments).}
+	{Encode text using a line prefix, e.g. comments (modifies).}
 	text [string!]
 	line-prefix [string!] {Usually "**" or "//".}
 	indent [string!] {Usually "  ".}
@@ -87,11 +87,13 @@ lines-exceeding: function [
 	text [string!]
 ] [
 
+	line-list: line: none
+
 	count-line: [
 		(
 			line: 1 + any [line 0]
 			if line-length < subtract index-of eol index-of bol [
-				length-exceeded: append any [length-exceeded copy []] line
+				line-list: append any [line-list copy []] line
 			]
 		)
 	]
@@ -101,7 +103,7 @@ lines-exceeding: function [
 		bol: skip to end eol: count-line
 	]
 
-	length-exceeded
+	line-list
 ]
 
 line-of: function [

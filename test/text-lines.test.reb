@@ -24,6 +24,7 @@ encode-lines-test: requirements 'encode-lines [
 	[quote {**^/**  x^/} = encode-lines {^/x} {**} {  }]
 	[quote {**^/**  x^/**^/} = encode-lines {^/x^/} {**} {  }]
 	[quote {**  x^/**    y^/**      z^/} = encode-lines {x^/  y^/    z} {**} {  }]
+	[quote "**^/**^/**^/" = encode-lines {^/^/} {**} {  }]
 ]
 
 decode-lines-test: requirements 'decode-lines [
@@ -34,6 +35,8 @@ decode-lines-test: requirements 'decode-lines [
 	[quote {^/x} = decode-lines {**^/**  x^/} {**} {  } ]
 	[quote {^/x^/} = decode-lines {**^/**  x^/**^/} {**} {  } ]
 	[quote {x^/  y^/    z} = decode-lines {**  x^/**    y^/**      z^/} {**} {  } ]
+	[quote {^/^/} = decode-lines "**^/**  ^/**^/" {**} {  }]
+	[quote {^/^/} = decode-lines "**^/**^/**^/" {**} {  }]
 ]
 
 lines-exceeding-test: requirements 'lines-exceeding [

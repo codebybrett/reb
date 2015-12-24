@@ -75,7 +75,8 @@ read-below: func [
 
 	*foreach: get bind 'foreach 'do
 
-	log: if trace [
+	log: all [
+		trace
 		func [message] [print mold compose/only message]
 	]
 
@@ -83,7 +84,7 @@ read-below: func [
 		fail "read-below expected path to have trailing slash."
 	]
 
-	exclude-files: compose [(any [exclude-files []])]
+	if not exclude [exclude-files: []]
 
 	; Initialise parameters
 	if not foreach [

@@ -29,6 +29,7 @@ encode-lines-test: requirements 'encode-lines [
 
 decode-lines-test: requirements 'decode-lines [
 
+	[quote {} = decode-lines {} {**} {} ]
 	[quote {} = decode-lines {**^/} {**} {  } ]
 	[quote {x} = decode-lines {**  x^/} {**} {  } ]
  	[quote {x^/} = decode-lines {**  x^/**^/} {**} {  } ]

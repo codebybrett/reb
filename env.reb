@@ -33,13 +33,9 @@ REBOL [
 ;	* Refresh file from url other than reb. Need a manifest?
 ;
 
-if not value? 'fail [
-	do %r2r3-future.r
-]
-
 env: context [
 
-	master: https://raw.githubusercontent.com/codebybrett/reb/master/
+	master: https://raw.githubusercontent.com/codebybrett/reb/master/renc/
 
 	base: either find [url!] to word! type-of system/script/args [
 		system/script/args
@@ -48,7 +44,7 @@ env: context [
 	]
 
 	logfn: func [message] [print mold new-line/all compose/only message false]
-	log: none ; Set to logfn for logging.
+	log: _ ; Set to logfn for logging.
 
 	log [env (compose [base (base) master (master)])]
 
@@ -86,7 +82,7 @@ env: context [
 	facts: context [
 		rebol3: (system/version > 2.100.0)
 		rebol2: (system/version < 2.100.0)
-		view: found? find form system/product {view}
+		view: find? form system/product {view}
 	]
 
 	retrieve: function [
@@ -94,7 +90,7 @@ env: context [
 		pattern [file! url!]
 	][
 
-		path: name: none
+		path: name: cached: script: _
 		set [path name] split-path pattern
 
 		failed: make block! []
@@ -153,6 +149,8 @@ env: context [
 		{Run a script.}
 		search-file [file! url!]
 	] [
+
+		file: _
 
 		script: retrieve search-file
 

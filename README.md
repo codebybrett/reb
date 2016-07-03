@@ -1,7 +1,8 @@
 reb
 ===
 
-Home location for rebol scripts.
+Home location for rebol scripts based on Ren-C.
+A work in progress and likely to break as Ren-C changes.
 
 ### Usage ###
 
@@ -28,10 +29,6 @@ If you want your base to be a webservice use
 SCRIPT-NEEDS declares the required files for a script and internally uses
 ENV to find and DO those files.
 
-### Note ###
-
-Scripts here are written with the Ren/C project in mind and may use the
-ren/c future bridge r2r3-future.r.
 
 ### License ###
 

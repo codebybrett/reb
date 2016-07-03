@@ -74,10 +74,10 @@ requirements: function [
 			if not block? test [
 				fail [{Test must be a block. Got: } (mold test)]
 			]
-			value: none
+			value: _
 			error? set/any 'value try bind test 'throws-error
 			keep all [
-				value? 'value
+				set? 'value
 				logic? value
 				value
 			]

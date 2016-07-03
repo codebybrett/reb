@@ -90,7 +90,7 @@ lines-exceeding: function [
 	text [string!]
 ] [
 
-	line-list: line: none
+	line-list: line: _
 
 	count-line: [
 		(
@@ -114,6 +114,8 @@ line-of: function [
 	text [string!]
 	position [string! integer!]
 ] [
+
+	line: _
 
 	if integer? position [
 		position: at text position

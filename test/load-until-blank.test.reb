@@ -18,7 +18,7 @@ script-needs [
 
 requirements %load-until-blank [
 
-	[none? load-until-blank {}]
+	[blank? load-until-blank {}]
 	[[[1 [2]] ""] = load-until-blank {1 [2]^/}]
 	[[[1 [2]] "rest"] = load-until-blank "1 [2]^/^/rest"]
 ]

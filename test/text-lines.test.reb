@@ -42,15 +42,15 @@ decode-lines-test: requirements 'decode-lines [
 
 lines-exceeding-test: requirements 'lines-exceeding [
 
-	[none? lines-exceeding 0 {}]
-	[none? lines-exceeding 1 {}]
+	[blank? lines-exceeding 0 {}]
+	[blank? lines-exceeding 1 {}]
 	[[1] = lines-exceeding 0 {x}]
 	[[2] = lines-exceeding 0 {^/x}]
 ]
 
 line-of-test: requirements 'line-of [
 
-	[none? line-of {} 0]
+	[blank? line-of {} 0]
 	[1 = line-of {x} 1]
 	[1 = line-of {x^/} 2]
 	[2 = line-of {x^/y} 3]

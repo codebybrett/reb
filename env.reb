@@ -35,7 +35,7 @@ REBOL [
 
 env: context [
 
-	master: https://raw.githubusercontent.com/codebybrett/reb/master/renc/
+	master: https://raw.githubusercontent.com/codebybrett/reb/master/
 
 	base: either find [url!] to word! type-of system/script/args [
 		system/script/args

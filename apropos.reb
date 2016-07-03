@@ -18,7 +18,7 @@ script-needs [
 
 apropos: func [
 	{Bind and evaluate block using one or more context references.}
-	reference [object! word! block! path!] {Represents context.}
+	reference [any-object! word! block! path!] {Represents context.}
 	body [block! paren!]
 	/binding {Just bind, do not evaluate the block}
 	/only {Evaluate the path only, not each segment of the path.}
@@ -26,7 +26,7 @@ apropos: func [
 
 	switch/default to word! type-of :reference [
 
-		object! [
+		object! frame! [
 			bind body reference
 		]
 

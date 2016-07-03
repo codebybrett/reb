@@ -50,4 +50,10 @@ requirements %apropos.reb [
 	[throws-error [id = 'no-value arg1 = 'c1] [apropos/only 'ctx1/ctx2 [reduce [c1 value]]]]
 
 	[[2 3] = apropos [ctx1/ctx2/ctx3 ctx1/ctx2] [reduce [value c3]]]
+
+	[ {Apropos supports frames.}
+		f: make frame! :add
+		apropos f [value1: 1 value2: 2]
+		3 = do f
+	]
 ]

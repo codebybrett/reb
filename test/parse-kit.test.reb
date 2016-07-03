@@ -1,5 +1,5 @@
 REBOL [
-	Title: "Parse-Kit - Tests"
+	Title: "parse-Kit - Tests"
 	Version: 1.0.0
 	Rights: {
 		Copyright 2015 Brett Handley
@@ -20,27 +20,27 @@ script-needs [
 parsing-at-test: requirements 'parsing-at [
 
 	[{Must return next position to succeed.}
-		not parse [] parsing-at x []
-		not parse [] parsing-at/end x []
+		not parse? [] parsing-at x []
+		not parse? [] parsing-at/end x []
 	]
 
 	[{Test for tail by default.}
-		not parse [] parsing-at x [x]
+		not parse? [] parsing-at x [x]
 	]
 
 	[{Can disable tail test.}
-		parse [] parsing-at/end x [x]
+		parse? [] parsing-at/end x [x]
 	]
 
 	[{Return next position to return success.}
-		parse [y] parsing-at x [next x]
-		parse [y] compose/only [(parsing-at x [x]) skip]
+		parse? [y] parsing-at x [next x]
+		parse? [y] compose/only [(parsing-at x [x]) skip]
 	]
 
-	[{Return none, false, or unset to fail.}
-		not parse [y] parsing-at x [none]
-		not parse [y] parsing-at x [false]
-		not parse [y] parsing-at x [()]
+	[{Return blank, false, or unset to fail.}
+		not parse? [y] parsing-at x [_]
+		not parse? [y] parsing-at x [false]
+		not parse? [y] parsing-at x [()]
 	]
 ]
 

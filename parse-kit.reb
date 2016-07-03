@@ -137,6 +137,8 @@ REBOL [
 ;
 ;		Implements a simple guard.
 ;		Does not move input position.
+;		Perhaps it's overkill to have a separate function for this. Historically it came
+;		from supporting Rebol 2.
 ;
 ;		Note: The resulting rule is not re-entrant because it has local variables
 ;		      that are not recreated if the rule is re-entered.
@@ -205,7 +207,7 @@ parsing-deep: func [
 	{Create a rule to search recursively for a pattern with local variables.}
 	pattern [block!] {Parse rule.}
 	/all {Match every occurrence of pattern, in effect all the input. Default is to stop after first match.}
-	/extern words [block! logic! none!] {These words are not local. TRUE = All words are not local.}
+	/extern words [block! logic! blank!] {These words are not local. TRUE = All words are not local.}
 	/contains {Test if the first input element contains the pattern.}
 	/skip {Rule for next position.} next-position {A parse rule. Default is SKIP.}
 	/recurse {Test before recursion.} recursion-guard {A parse rule - must succeed for recursion. Default is to enter any-block!]}
@@ -434,45 +436,18 @@ parsing-to: function [
 
 ]
 
-either system/version > 2.100.0 [; Rebol 3
+parsing-unless: func [
+	{Creates a rule that fails if the rule matches, succeeds if the rule fails. Will not consume input. Susperseeded by Rebol 3's NOT.}
+	rule [block!] {Parse rule.}
+] [
+	compose/only [not (rule)]
+]
 
-	parsing-unless: func [
-		{Creates a rule that fails if the rule matches, succeeds if the rule fails. Will not consume input. Susperseeded by Rebol 3's NOT.}
-		rule [block!] {Parse rule.}
-	] [
-		compose/only [not (rule)]
-	]
-
-	parsing-when: func [
-		{Creates a rule that succeeds or fails depending on the pattern but does not move input position.}
-		pattern [block!] {Parse pattern.}
-	] [
-		compose/only [and (pattern)]
-	]
-
-] [; Rebol 2
-
-	parsing-unless: func [
-		{Creates a rule that fails if the rule matches, succeeds if the rule fails. Will not consume input.}
-		rule [block!] {Parse rule.}
-		/local new
-	] [
-		use [position result] [
-			new: copy/deep [[position: rule (result: [end skip]) | (result: [:position])] result]
-			change/only/part next new/1 rule 1
-			new
-		]
-	]
-
-	parsing-when: func [
-		{Creates a rule that succeeds or fails depending on the pattern but does not move input position.}
-		pattern [block!] {Parse pattern.}
-	] [
-		use [position] [
-			compose/only [position: (pattern) :position]
-		]
-	]
-
+parsing-when: func [
+	{Creates a rule that succeeds or fails depending on the pattern but does not move input position.}
+	pattern [block!] {Parse pattern.}
+] [
+	compose/only [and (pattern)]
 ]
 
 

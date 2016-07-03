@@ -74,7 +74,7 @@ prettify-tree: function [
 update-parents: function [
 	{Updates tree parent references.}
 	tree [block!] {[value properties child1 child2 ...]}
-	/parent node [none! block!]
+	/parent node [blank! block!]
 ][
 
 	reference: at tree 4
@@ -103,7 +103,7 @@ remove-parents: function [
 add-parents: function [
 	{Modify structure [value properties child1 child2 ...] to restore parents to a tree.}
 	block [block!]
-	/parent node [none! block!] {Specify parent node.}
+	/parent node [blank! block!] {Specify parent node.}
 ][
 
 	insert/only at block 2 node

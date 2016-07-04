@@ -47,4 +47,12 @@ parsing-at-test: requirements 'parsing-at [
 requirements %parse-kit.reb [
 
 	['passed = last parsing-at-test]
+
+	[blank? after [skip] {}]
+	[tail? after [skip] {x}]
+	
+	[
+		f: 1
+		[x 1 x] = impose 'f [x f x]
+	]
 ]

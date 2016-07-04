@@ -785,10 +785,11 @@ impose: function [
 ; ----------------------------------------------------------------------
 
 after: function [
-	{Return next input position if rule matches or none if unmatched.}
+	{Return next input position if rule matches or blank if unmatched.}
 	rule {Parse rule to match.}
 	input
 ][
+	position: _
 	parse/all/case input compose [(:rule) position:]
 	position
 ]

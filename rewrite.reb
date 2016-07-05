@@ -44,8 +44,8 @@ REBOL [
         ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
         POSSIBILITY OF SUCH DAMAGE.
     }
-	Date: 13-Oct-2015
-	Version: 2.3.0
+	Date: 05-Jul-2016
+	Version: 2.4.0
 	History: [
 		17-May-2006 1.1.0 "History start"
 		17-May-2006 1.2.1 "First version"
@@ -53,12 +53,13 @@ REBOL [
 		25-Mar-2015 1.3.0 {Match now returns faster by returing first matched input position instead of True
                                so it can be used like a find. Use /All for previous behaviour. [Brett Handley]}
 		13-Jul-2015 2.0.0 "Rename Match to Search. Add case refinement for Rebol2. [Brett Handley]"
-		23-Aug-2015 2.1.0 {Add DEBUG keyword for tracing rewrites (place before search pattern).
-                               Replace /trace with /pause. [Brett Handley]}
+		23-Aug-2015 2.1.0 {Add trace keyword for tracing rewrites (place before search pattern).
+                               new /trace with /pause. [Brett Handley]}
 		25-Sep-2015 2.1.1 {File name changed to rewrite.reb. [Brett Handley]}
 		30-Sep-2015 2.2.0 {Rewrite/once specifies a single pass.
-		                   Rewrite/only prevents reprocessing of a replacement in same pass. [Brett Handley]}
+		                   Rewrite/only prevents reprocessing of a newment in same pass. [Brett Handley]}
 		13-Oct-2015 2.3.0 {Modify to work with Ren/C future bridge (r2r3-future.r).}
+		05-Jul-2016 2.4.0 {Reaname /trace to /trace, remove copy behaviour. Allow global trace setting.}
 	]
 ]
 
@@ -70,23 +71,24 @@ REBOL [
 ;
 ; Rewrite
 ;
-;	Rewrite text or block (recursively) using search pattern as parse rule and replacemnt as compose block.
+;	Rewrite text or block (recursively) using search pattern as parse rule and newmnt as compose block.
 ;
-;	By default, repeatedly does a top down search and replace until no more occurrences are found.
+;	By default, repeatedly does a top down search and new until no more occurrences are found.
 ;
-;	Use /once to single top down search and replace pass.
+;	Use /once to single top down search and new pass.
 ;
-;	Use /only to prevent a replacement being immediately reprocessed by continuing the search after the
-;	replacement. The replacement will be reprocessed in the next pass.
+;	Use /only to prevent a newment being immediately reprocessed by continuing the search after the
+;	newment. The newment will be reprocessed in the next pass.
 ;
-;	By combining /once and /only replacements can be made that would ordinarily cause an infinite loop.
+;	By combining /once and /only newments can be made that would ordinarily cause an infinite loop.
 ;	E.g:
 ;
 ;		rewrite [x] [ ['x][y] ['y]['x]] ; Causes an infinite loop.
 ;
-;		rewrite/once/only [x] [ ['x][y] ['y]['x]] ; Once replacement only.
+;		rewrite/once/only [x] [ ['x][y] ['y]['x]] ; Once newment only.
 ;
-;	Place the word DEBUG before each search pattern you want debugged.
+;	Place the word trace before each search pattern you want traced. Alternatively
+;	use trace on to turn on tracing for all rules until the next trace off.
 ;
 ; -------------------------------------------------------------------------------------------------------------
 
@@ -192,58 +194,65 @@ rewrite: func [
 	"Apply a list of rewrite rules to data"
 	data [block! string!] "Data to change"
 	rules [block!] "List of rewrite rules"
-	/debug {Override default debug function.} debug-fn [function!] {Takes a single argument.}
-	/once {Only one full top down search and replace pass is performed.}
-	/only {Replacements are not reprocessed in the same pass.}
+	/trace {Override default trace function.} trace-fn [function!] {Takes a single argument.}
+	/once {Only one full top down search and new pass is performed.}
+	/only {newments are not reprocessed in the same pass.}
 	/pause "Pause rewriting process at each pass." pause-body [block!] {Evaluate at each pause.}
 	/local
-	rules* replace mk1 mk2 event pattern production dbg do-debug process edit
+	search-pattern new mk1 mk2 event pattern production trc-mode trc do-trace process edit
 ] [
+
 	if empty? rules [return data]
-	if not debug [
-		debug-fn: func [edit] [
+
+	if not trace [
+		trace-fn: func [edit] [
 			print [
 				{^/------ rewrite -----} newline
-				{target:} mold edit/target newline
-				{replace:} mold edit/replace
+				{old:} mold copy/part edit/position edit/length newline
+				{new:} mold edit/new
 			]
 		]
 	]
-	do-debug: func [] compose [
-		(:debug-fn) compose/deep/only [
-			target (copy/part mk1 mk2)
-			replace (replace)
+
+	do-trace: func [] compose [
+		(:trace-fn) compose/deep/only [
+			new (new)
 			length (subtract index-of mk2 index-of mk1)
 			position (mk1)
 		]
 	]
-	rules*: make block! 16
-	parse rules [
-		any [
-			(dbg: false) opt ['debug (dbg: true)] set pattern skip set production skip
-			(
-				event: if dbg [[do-debug]]
 
-				insert insert/only insert/only tail rules* pattern make paren! compose/only [
+	search-pattern: make block! 16
+
+	parse rules [
+		(trc-mode: false)
+		any [
+			'trace ['on | 'true] (trc-mode: true)
+			| 'trace ['off | 'false] (trc-mode: false)
+			| (trc: trc-mode) opt ['trace (trc: true)] set pattern skip set production skip (
+
+				event: to-value if trc [[do-trace]]
+
+				insert insert/only insert/only tail search-pattern pattern make paren! compose/only [
 					event: (event)
-					replace: compose/deep (production)
+					new: compose/deep (production)
 				] '|
 			)
 		]
 	]
-	remove back tail rules*
+	remove back tail search-pattern
+
+	edit: either only [
+		quote (do event mk1: change/part mk1 new mk2)
+	][
+		quote (do event change/part mk1 new mk2)
+	]
 
 	process: either once [:do][:until]
 
-	edit: either only [
-		quote (do event mk1: change/part mk1 replace mk2)
-	][
-		quote (do event change/part mk1 replace mk2)
-	]
-
 	process [
 		if pause [do pause-body ask "? "]
-		not search/all data [mk1: rules* mk2: edit :mk1]
+		not search/all data [mk1: search-pattern mk2: edit :mk1]
 	]
 
 	data

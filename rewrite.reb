@@ -71,7 +71,7 @@ REBOL [
 ;
 ; Rewrite
 ;
-;	Rewrite text or block (recursively) using search pattern as parse rule and newmnt as compose block.
+;	Rewrite text or block (recursively) using search pattern as parse rule and replacement as compose block.
 ;
 ;	By default, repeatedly does a top down search and new until no more occurrences are found.
 ;
@@ -85,7 +85,7 @@ REBOL [
 ;
 ;		rewrite [x] [ ['x][y] ['y]['x]] ; Causes an infinite loop.
 ;
-;		rewrite/once/only [x] [ ['x][y] ['y]['x]] ; Once replacement only.
+;		rewrite/once/only [x] [ ['x][y] ['y]['x]] ; One replacement only.
 ;
 ;	Place the word trace before each search pattern you want traced. Alternatively
 ;	use trace on to turn on tracing for all rules until the next trace off.
@@ -146,7 +146,7 @@ rewrite: func [
 	rules [block!] "List of rewrite rules"
 	/trace {Override default trace function.} trace-fn [function!] {Takes a single argument.}
 	/once {Only one full top down search and new pass is performed.}
-	/only {replacements are not reprocessed in the same pass.}
+	/only {Replacements are not reprocessed in the same pass.}
 	/pause "Pause rewriting process at each pass." pause-body [block!] {Evaluate at each pause.}
 	/local
 	search-pattern new mk1 mk2 event pattern production trc-mode trc do-trace process edit

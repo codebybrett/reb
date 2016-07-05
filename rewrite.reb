@@ -92,103 +92,53 @@ REBOL [
 ;
 ; -------------------------------------------------------------------------------------------------------------
 
-either system/version > 2.100.0 [; R3
 
-	; Brett Handley: Create R3 version of match to guard the INTO.
-
-	search: func [
-		"Search data recursively to satisfy a parse rule."
-		data [block! string!] "Data to search."
-		rule [block!] "PARSE rule to use as pattern"
-		/all {Match every occurrence of pattern. Returns position after last match. Default is stop at first match.}
-		/local
-		result recurse position
-	] [
-		result: false
-		either all [
-			recurse: either block? data [[
-					some [
-						rule result:
-						|
-						and any-block! into recurse
-						|
-						skip
-					]
-				]] [[
-					some [
-						rule result:
-						|
-						skip
-					]
-				]]
-		] [
-			recurse: either block? data [[
-					some [position:
-						rule (result: position) return (true)
-						|
-						and any-block! into recurse
-						|
-						skip
-					]
-				]] [[
-					some [position:
-						rule (result: position) return (true)
-						|
-						skip
-					]
-				]]
-		]
-		parse data recurse
-		to-value if result [result] ; Failure returns none.
-	]
-
+search: func [
+	"Search data recursively to satisfy a parse rule."
+	data [block! string!] "Data to search."
+	rule [block!] "PARSE rule to use as pattern"
+	/all {Match every occurrence of pattern. Returns position after last match. Default is stop at first match.}
+	/local
+	result recurse position
 ] [
-
-	search: func [
-		"Search data recursively to satisfy a parse rule."
-		data [block! string!] "Data to search."
-		rule [block!] "PARSE rule to use as pattern"
-		/all {Match every occurrence of pattern. Returns position after last match. Default is to stop at first match.}
-		/case {Uses case-sensitive comparison.}
-		/local
-		result recurse position guard parse*
+	result: false
+	either all [
+		recurse: either block? data [[
+				some [
+					rule result:
+					|
+					and any-block! into recurse
+					|
+					skip
+				]
+			]] [[
+				some [
+					rule result:
+					|
+					skip
+				]
+			]]
 	] [
-		result: false
-		either all [
-			recurse: either block? data [[
-					some [
-						rule result:
-						|
-						into recurse
-						|
-						skip
-					]
-				]] [[
-					some [
-						rule result:
-						|
-						skip
-					]
-				]]
-		] [
-			guard: none
-			recurse: either block? data [[
-					some [position:
-						opt [rule (result: position guard: [end skip])]
-						guard [into recurse | skip]
-					]
-				]] [[
-					some [position:
-						opt [rule (result: position guard: [end skip])]
-						guard skip
-					]
-				]]
-		]
-		either case [parse/all/case data recurse] [parse/all data recurse]
-		to-value if result [result] ; Failure returns none.
+		recurse: either block? data [[
+				some [position:
+					rule (result: position) return (true)
+					|
+					and any-block! into recurse
+					|
+					skip
+				]
+			]] [[
+				some [position:
+					rule (result: position) return (true)
+					|
+					skip
+				]
+			]]
 	]
-
+	parse data recurse
+	to-value if result [result] ; Failure returns none.
 ]
+
 
 rewrite: func [
 	"Apply a list of rewrite rules to data"

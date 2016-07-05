@@ -53,8 +53,8 @@ REBOL [
 		25-Mar-2015 1.3.0 {Match now returns faster by returing first matched input position instead of True
                                so it can be used like a find. Use /All for previous behaviour. [Brett Handley]}
 		13-Jul-2015 2.0.0 "Rename Match to Search. Add case refinement for Rebol2. [Brett Handley]"
-		23-Aug-2015 2.1.0 {Add trace keyword for tracing rewrites (place before search pattern).
-                               new /trace with /pause. [Brett Handley]}
+		23-Aug-2015 2.1.0 {Add DEBUG keyword for tracing rewrites (place before search pattern).
+                               Replace /trace with /pause. [Brett Handley]}
 		25-Sep-2015 2.1.1 {File name changed to rewrite.reb. [Brett Handley]}
 		30-Sep-2015 2.2.0 {Rewrite/once specifies a single pass.
 		                   Rewrite/only prevents reprocessing of a replacement in same pass. [Brett Handley]}
@@ -73,9 +73,9 @@ REBOL [
 ;
 ;	Rewrite text or block (recursively) using search pattern as parse rule and replacement as compose block.
 ;
-;	By default, repeatedly does a top down search and new until no more occurrences are found.
+;	By default, repeatedly does a top down search and replace until no more occurrences are found.
 ;
-;	Use /once to single top down search and new pass.
+;	Use /once to single top down search and replace pass.
 ;
 ;	Use /only to prevent a replacement being immediately reprocessed by continuing the search after the
 ;	replacement. The replacement will be reprocessed in the next pass.
@@ -145,7 +145,7 @@ rewrite: func [
 	data [block! string!] "Data to change"
 	rules [block!] "List of rewrite rules"
 	/trace {Override default trace function.} trace-fn [function!] {Takes a single argument.}
-	/once {Only one full top down search and new pass is performed.}
+	/once {Only one full top down search and replace pass is performed.}
 	/only {Replacements are not reprocessed in the same pass.}
 	/pause "Pause rewriting process at each pass." pause-body [block!] {Evaluate at each pause.}
 	/local

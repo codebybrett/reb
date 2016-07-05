@@ -57,7 +57,7 @@ REBOL [
                                new /trace with /pause. [Brett Handley]}
 		25-Sep-2015 2.1.1 {File name changed to rewrite.reb. [Brett Handley]}
 		30-Sep-2015 2.2.0 {Rewrite/once specifies a single pass.
-		                   Rewrite/only prevents reprocessing of a newment in same pass. [Brett Handley]}
+		                   Rewrite/only prevents reprocessing of a replacement in same pass. [Brett Handley]}
 		13-Oct-2015 2.3.0 {Modify to work with Ren/C future bridge (r2r3-future.r).}
 		05-Jul-2016 2.4.0 {Reaname /trace to /trace, remove copy behaviour. Allow global trace setting.}
 	]
@@ -77,15 +77,15 @@ REBOL [
 ;
 ;	Use /once to single top down search and new pass.
 ;
-;	Use /only to prevent a newment being immediately reprocessed by continuing the search after the
-;	newment. The newment will be reprocessed in the next pass.
+;	Use /only to prevent a replacement being immediately reprocessed by continuing the search after the
+;	replacement. The replacement will be reprocessed in the next pass.
 ;
-;	By combining /once and /only newments can be made that would ordinarily cause an infinite loop.
+;	By combining /once and /only replacements can be made that would ordinarily cause an infinite loop.
 ;	E.g:
 ;
 ;		rewrite [x] [ ['x][y] ['y]['x]] ; Causes an infinite loop.
 ;
-;		rewrite/once/only [x] [ ['x][y] ['y]['x]] ; Once newment only.
+;		rewrite/once/only [x] [ ['x][y] ['y]['x]] ; Once replacement only.
 ;
 ;	Place the word trace before each search pattern you want traced. Alternatively
 ;	use trace on to turn on tracing for all rules until the next trace off.
@@ -196,7 +196,7 @@ rewrite: func [
 	rules [block!] "List of rewrite rules"
 	/trace {Override default trace function.} trace-fn [function!] {Takes a single argument.}
 	/once {Only one full top down search and new pass is performed.}
-	/only {newments are not reprocessed in the same pass.}
+	/only {replacements are not reprocessed in the same pass.}
 	/pause "Pause rewriting process at each pass." pause-body [block!] {Evaluate at each pause.}
 	/local
 	search-pattern new mk1 mk2 event pattern production trc-mode trc do-trace process edit

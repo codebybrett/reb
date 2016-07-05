@@ -57,7 +57,7 @@ either system/version > 2.100.0 [; Rebol3
 			error? set/any 'err try test
 			err: disarm err
 			string? err/arg1
-			parse/all err/arg1 match
+			parse? err/arg1 match
 		]
 	]
 

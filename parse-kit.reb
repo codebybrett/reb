@@ -790,6 +790,6 @@ after: function [
 	input
 ][
 	position: _
-	parse/all/case input compose [(:rule) position:]
+	parse/case input compose [(:rule) position:]
 	position
 ]

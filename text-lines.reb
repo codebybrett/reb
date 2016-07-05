@@ -23,7 +23,7 @@ decode-lines: function [
     pattern: compose/only [(line-prefix)]
     if not empty? indent [append pattern compose/only [opt (indent)]]
     line: [pos: pattern rest: (rest: remove/part pos rest) :rest thru newline]
-    if not parse/all text [any line] [
+    if not parse? text [any line] [
 		fail [{Expected line} (line-of text pos) {to begin with} (mold line-prefix) {and end with newline.}]
     ]
 	remove back tail text
@@ -42,7 +42,7 @@ encode-lines: func [
 
 	; Encode newlines.
 	bol: join line-prefix indent
-	parse/all text [
+	parse text [
 		any [
 			thru newline pos:
 			[newline (pos: insert pos line-prefix) | (pos: insert pos bol)] :pos
@@ -101,7 +101,7 @@ lines-exceeding: function [
 		)
 	]
 
-	parse/all text [
+	parse text [
 		any [bol: to newline eol: skip count-line]
 		bol: skip to end eol: count-line
 	]
@@ -123,7 +123,7 @@ line-of: function [
 
 	count-line: [(line: 1 + any [line 0])]
 
-	parse/all copy/part text next position [
+	parse copy/part text next position [
 		any [to newline skip count-line] skip count-line
 	]
 

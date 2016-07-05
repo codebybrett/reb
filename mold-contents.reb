@@ -21,7 +21,7 @@ mold-contents: func [
 
 	string: mold block
 
-	either parse/all string [
+	either parse? string [
 		skip copy bol [newline some #" "] to end
 	][
 		replace/all string bol newline

@@ -44,15 +44,70 @@ parsing-at-test: requirements 'parsing-at [
 	]
 ]
 
-requirements %parse-kit.reb [
+parsing-deep-test: requirements 'parsing-deep [
 
-	['passed = last parsing-at-test]
+	[
+		all [
+			not parse? [] parsing-deep []
+			parse? [x] parsing-deep [word!]
+			parse? [1 x] parsing-deep [word!]
+			parse? [1 [x]] parsing-deep [word!]
+			false? parse? [1 [x] 2] parsing-deep [word!]
+			false? parse? [1 [x] 2 [x]] parsing-deep [word!]
+		]
+	]
+]
+
+parsing-thru-test: requirements 'parsing-thru [
+
+	[
+		all [
+			false? parse? [] parsing-thru ['x]
+			parse? [1 2 x] parsing-thru ['x]
+		]
+	]
+
+	[
+		thru-x-or-y: parsing-thru ['x | 'y]
+		parse? [1 x 1 y] [2 thru-x-or-y]
+	]
+]
+
+parsing-to-test: requirements 'parsing-to [
+
+	[
+		all [
+			false? parse? [] parsing-thru ['x]
+			parse? [1 2 x] parsing-thru ['x]
+		]
+	]
+
+	[
+		to-x-or-y: parsing-to ['x | 'y]
+		parse [1 1 1 x 1 1 y] [2 [to-x-or-y skip]]
+	]
+]
+
+impose-test: requirements 'impose [
+
+	[
+		f: 1
+		equal? [x 1 x] impose 'f [x f x]
+	]
+]
+
+after-test: requirements 'after [
 
 	[blank? after [skip] {}]
 	[tail? after [skip] {x}]
-	
-	[
-		f: 1
-		[x 1 x] = impose 'f [x f x]
-	]
+]
+
+requirements %parse-kit.reb [
+
+	['passed = last parsing-at-test]
+	['passed = last parsing-deep-test]
+	['passed = last parsing-thru-test]
+	['passed = last parsing-to-test]
+	['passed = last impose-test]
+	['passed = last after-test]
 ]

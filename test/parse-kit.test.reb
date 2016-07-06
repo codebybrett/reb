@@ -48,7 +48,7 @@ parsing-deep-test: requirements 'parsing-deep [
 
 	[
 		all [
-			not parse? [] parsing-deep []
+			 parse? [] parsing-deep []
 			parse? [x] parsing-deep [word!]
 			parse? [1 x] parsing-deep [word!]
 			parse? [1 [x]] parsing-deep [word!]
@@ -63,6 +63,7 @@ parsing-thru-test: requirements 'parsing-thru [
 	[
 		all [
 			false? parse? [] parsing-thru ['x]
+			parse? [x] parsing-thru ['x]
 			parse? [1 2 x] parsing-thru ['x]
 		]
 	]
@@ -104,6 +105,21 @@ parsing-matched-test: requirements 'parsing-matched [
 
 ]
 
+parsing-earliest-test: requirements 'parsing-earliest [
+
+	[
+		all [
+			false? parse? [] parsing-earliest []
+			parse? [x] parsing-earliest [skip]
+		]
+	]
+
+	[
+		earliest: parsing-earliest [integer! word!] 
+		parse? [x 1] [earliest skip]
+	]
+]
+
 
 impose-test: requirements 'impose [
 
@@ -125,6 +141,7 @@ requirements %parse-kit.reb [
 	['passed = last parsing-deep-test]
 	['passed = last parsing-thru-test]
 	['passed = last parsing-to-test]
+	['passed = last parsing-earliest-test]
 	['passed = last impose-test]
 	['passed = last after-test]
 ]

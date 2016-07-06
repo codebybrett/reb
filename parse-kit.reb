@@ -177,6 +177,7 @@ REBOL [
 
 script-needs [
 	%set-words-of.reb
+	%do-next.reb
 ]
 
 
@@ -211,7 +212,7 @@ parsing-deep: func [
 	/contains {Test if the first input element contains the pattern.}
 	/skip {Rule for next position.} next-position {A parse rule. Default is SKIP.}
 	/recurse {Test before recursion.} recursion-guard {A parse rule - must succeed for recursion. Default is to enter any-block!]}
-	/local set-words initialise rule recursion
+	/local set-words initialise
 ] [
 
 	if system/version > 2.100.0 [; R3
@@ -325,7 +326,7 @@ parsing-expression: function [
 		]
 		match: remove collect [foreach x compose [(:symbol)] [keep compose [| (rule :x)]]]
 		condition: parsing-when match
-		evaluate: either next [:reducer][:do-next]
+		evaluate: get either next ['reducer]['do-next]
 		evaluation: parsing-at input compose/deep [
 			if void? evaluate input [value rest] [value: []]
 			change/part input :value rest
@@ -406,11 +407,13 @@ parsing-thru: func [
 	/skip {Advance position.} next-position {A parse rule. Default is to SKIP.}
 ] [
 
+	if not skip [next-position: _]
+
 	use [match search result][
 
 		initialise: compose/only [
 			match: (compose [(:rule)])
-			search: (either set? 'next-position [compose [(:next-position)]][to lit-word! 'skip])
+			search: (either next-position [compose [(:next-position)]][to lit-word! 'skip])
 			result: [end skip]
 		]
 

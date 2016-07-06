@@ -171,7 +171,7 @@ REBOL [
 ;
 ;	after
 ;
-;		Returns next series position if rule is matched, or none if not.
+;		Returns next series position if rule is matched, or blank if not.
 ;
 ; ---------------------------------------------------------------------------------------------------------------------
 
@@ -188,7 +188,7 @@ script-needs [
 parsing-at: func [
 	{Defines a rule which evaluates a block for the next input position, fails otherwise.}
 	'word [word!] {Word set to input position (will be local).}
-	block [block!] {Block to evaluate. Return next input position, or none/false.}
+	block [block!] {Block to evaluate. Return next input position, or blank/false.}
 	/end {Drop the default tail check (allows evaluation at the tail).}
 ] [
 	use [result position][
@@ -220,6 +220,7 @@ parsing-deep: func [
 
 	set-words: collect [
 		foreach word [pattern next-position recursion-guard] [
+			if not set? word [set word _]
 			keep map-each word set-words-of/deep any [get word []] [to word! word]
 		]
 	]
@@ -235,7 +236,7 @@ parsing-deep: func [
 
 		local-vars: exclude set-words words
 
-		bind-vars: none
+		bind-vars: _
 		if not empty? local-vars [
 			bind-vars: to paren! compose/deep/only [
 				use (local-vars) [local-vars: (local-vars)] ; Give locals their own context.
@@ -248,13 +249,13 @@ parsing-deep: func [
 		either all [
 			match-deep: copy/deep [
 				bind-vars
-				some [match (result: none) | search]
+				some [match (result: _) | search]
 				result
 			]
 		][
 			match-deep: copy/deep [
 				bind-vars
-				some [match (match: search: [end skip] result: none) | search]
+				some [match (match: search: [end skip] result: _) | search]
 				result
 			]
 		]
@@ -285,7 +286,7 @@ parsing-earliest: function [
 
 		parsing-matched list rules [
 
-			remove-each x list [none? x]
+			remove-each x list [blank? x]
 
 			to-value if not empty? list [
 
@@ -313,11 +314,10 @@ parsing-expression: function [
 	{Creates a rule that replaces an expression with it's evaluation.}
 	symbol [word! block!] {The word or block of words that denote the expression to be evaluated.}
 	/all {Deep replace all expressions.}
-	/next evaluate [function!] {A function like DO/next. DO/Next is the default.}
+	/next reducer [function!] {A function like DO-NEXT. DO-NEXT is the default.}
 	/stay {Stay at position after replacement.}
-	/unset {Unset! is retained in result.}
 ] [
-	use [value rest] [
+	use [value rest evaluate] [
 		rule: function [x][
 			if not word? :x [fail {expression symbol must be a word!}]
 			x: to lit-word! :x
@@ -325,10 +325,10 @@ parsing-expression: function [
 		]
 		match: remove collect [foreach x compose [(:symbol)] [keep compose [| (rule :x)]]]
 		condition: parsing-when match
+		evaluate: either next [:reducer][:do-next]
 		evaluation: parsing-at input compose/deep [
-			set [value rest] (either next [:evaluate][[do/next]]) input
-			(either unset [[]][[unless value? 'value [value: []]]])
-			change/part input get/any 'value rest
+			if void? evaluate input [value rest] [value: []]
+			change/part input :value rest
 		]
 		rule: compose [
 			(condition)
@@ -341,10 +341,10 @@ parsing-expression: function [
 ]
 
 parsing-matched: function [
-	{Create a rule that evaluates a block of positions, one for each matched rule in a list.}
-	'word [word!] {Word set to result positions of the rules (will be local).}
+	{Create a rule that evaluates a block of positions, one for each matched rule in a list (tests all alternative rules).}
+	'word [word!] {Word set to block of result positions of the rules (will be local).}
 	rules [block!] {Block of rules to match.}
-	block [block!] {Block to evaluate. Return next input position, or none/false.}
+	block [block!] {Block to evaluate. Return next input position, or blank/false.}
 ] [
 
 	word: use reduce [:word] reduce [compose [(word)]]
@@ -354,7 +354,7 @@ parsing-matched: function [
 			keep compose/only [(to paren! compose [positions: array (length rules)]) start:]
 			for i 1 length rules 1 [
 				keep compose/deep/only [
-					:start (to paren! [position: none]) opt [(:rules/:i) position:] (to paren! compose [poke positions (i) position])
+					:start (to paren! [position: _]) opt [(:rules/:i) position:] (to paren! compose [poke positions (i) position])
 				]
 			]
 			keep/only to paren! compose/only [
@@ -410,18 +410,16 @@ parsing-thru: func [
 
 		initialise: compose/only [
 			match: (compose [(:rule)])
-			search: (either next-position [compose [(:next-position)]][to lit-word! 'skip])
+			search: (either set? 'next-position [compose [(:next-position)]][to lit-word! 'skip])
 			result: [end skip]
 		]
 
 		new-line compose/only [
 			(to paren! initialise)
-			some [match (match: search: [end skip] result: none) | search]
+			some [match (match: search: [end skip] result: _) | search]
 			result
 		] true
-
 	]
-
 ]
 
 parsing-to: function [
@@ -431,7 +429,7 @@ parsing-to: function [
 ] [
 
 	use [position][
-		compose [(parsing-thru/skip compose [position: (rule)] :next-position) :position]
+		compose [(parsing-thru/skip compose [position: (rule)] to-value :next-position) :position]
 	]
 
 ]
@@ -520,7 +518,7 @@ post-rule-action: function [
 ; ----------------------------------------------------------------------
 
 on-parsing: function [
-	{Modifies rule to call function for [name matched position] when rule begins (none), succeeds (true) or fails (false).}
+	{Modifies rule to call function for [name matched position] when rule begins (_), succeeds (true) or fails (false).}
 	rule [word!] {The rule name.}
 	event [function!] {Single block argument callback function.}
 	/literal {Evaluates event for [name length starting-position] only when rule succeeds.}
@@ -552,7 +550,7 @@ on-parsing: function [
 		] [
 
 			def: pre-rule-action/position :def compose/deep [
-				event reduce [(to lit-word! :rule) none :event.at]
+				event reduce [(to lit-word! :rule) _ :event.at]
 			] 'event.at
 
 			def: post-rule-action/position :def compose/deep [
@@ -607,8 +605,8 @@ get-parse: function [
 		set arg any [:def copy []]
 	]
 
-	node: context [type: name: length: position: none]
-	matched: none
+	node: context [type: name: length: position: _]
+	matched: _
 
 	; ----------------------------------------
 	; Embed rules event code into the parse rules.
@@ -622,7 +620,7 @@ get-parse: function [
 
 		set [name matched position] rule.evt
 
-		either none? matched [
+		either blank? matched [
 
 			; output points to tail of parent.
 			; Add rule node. Push.
@@ -665,7 +663,7 @@ get-parse: function [
 
 			set [name matched position] terminal.evt
 
-			either none? matched [
+			either blank? matched [
 
 				start-position: :position
 
@@ -712,9 +710,9 @@ get-parse: function [
 	; Do the parse.
 	; ----------------------------------------
 
-	output: tail compose/only [root (none) (copy [type root position none length none])]
-	try-result: none
-	if error [set :error-state none]
+	output: tail compose/only [root (_) (copy [type root position _ length _])]
+	try-result: _
+	if error [set :error-state _]
 	if error? set/any 'try-result try [do body] [
 		if error [
 			set :error-state compose/only [
@@ -772,11 +770,15 @@ impose: function [
 	/only {Does not re-evaluate replaced expressions.}
 	/unset {Unset! is retained in result.}
 ][
-	rule: copy 'parsing-expression/all
-	either func [append rule 'next][evaluate: :do]
-	if not only [append rule 'stay]
-	if unset [append rule 'unset]
-	parse block do rule :symbol :evaluate
+
+	get-rule: specialize 'parsing-expression [
+		all: true
+		next: func
+		stay: not only
+	]
+
+	rule: get-rule :symbol :evaluate
+	parse block rule 
 	block
 ]
 

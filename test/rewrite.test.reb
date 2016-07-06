@@ -17,7 +17,7 @@ script-needs [
 	%../rewrite.reb
 ]
 
-parsing-at-test: requirements 'rewrite [
+requirements 'rewrite [
 
 	[
         [] = rewrite [] []

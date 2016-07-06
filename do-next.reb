@@ -17,12 +17,12 @@ REBOL [
 do-next: function [
     {Evaluate next expression in a block of source code. State as an object.}
 	source [block! string!]
-    /with 
-        state [object!] {State object where words VALUE and REST will be set.}
+    words [block!] {Words to be set to expression value and source position.}
 ][
 
-    if not with [state: context [value: rest: _]]
-    set/any in state 'value do/next source in state 'rest
-    state
+    value: any [to-value first words 'value]
+    position: any [to-value second words 'position]
+
+    set/any value do/next source position
 ]
 

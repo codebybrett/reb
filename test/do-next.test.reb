@@ -19,16 +19,23 @@ script-needs [
 
 requirements 'do-next [
 
+	[void? do-next [] []]
+
+	[equal? 1 do-next [1 2] []]
+
 	[
-        state: do-next []
+        do-next [] [value rest]
         all [
-            void? get/any in state 'value
-            tail? state/rest
+            void? get/any 'value
+            tail? rest
         ]
     ]
 
 	[
-        state: do-next [1 2]
-        [1 [2]] = reduce bind [value rest] state
+        do-next [1 2] [value rest]
+        all [
+            equal? value 1
+            equal? rest [2]
+        ]
     ]
 ]

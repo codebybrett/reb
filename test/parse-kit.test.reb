@@ -88,6 +88,23 @@ parsing-to-test: requirements 'parsing-to [
 	]
 ]
 
+parsing-matched-test: requirements 'parsing-matched [
+
+	[
+		parse? [x y] parsing-matched result [
+			[2 skip]
+			[2 word!]
+			['x 'y]
+		] [
+			if all map-each pos result [tail? pos] [
+				result/1 ; Return first position as success.
+			]
+		]
+	]
+
+]
+
+
 impose-test: requirements 'impose [
 
 	[

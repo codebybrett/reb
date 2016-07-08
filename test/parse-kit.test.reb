@@ -135,6 +135,16 @@ after-test: requirements 'after [
     [tail? after [skip] {x}]
 ]
 
+get-parse-test: requirements 'get-parse-test [
+
+    [empty? get-parse [][]]
+
+    [
+        rule: [word!]
+        block? get-parse [parse [x] [rule]]
+    ]
+]
+
 requirements %parse-kit.reb [
 
     ['passed = last parsing-at-test]
@@ -144,4 +154,5 @@ requirements %parse-kit.reb [
     ['passed = last parsing-earliest-test]
     ['passed = last impose-test]
     ['passed = last after-test]
+    ['passed = last get-parse-test]
 ]

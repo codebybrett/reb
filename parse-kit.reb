@@ -577,7 +577,7 @@ restore-rule: function [
     rule [word!] {The rule name.}
 ] [
 
-    if all [(block? def: get rule) (found? pos: find/last :def first [event.end:])] [
+    if all [(block? def: get rule) (pos: find/last :def first [event.end:])] [
         set rule first get bind 'saved-rule pos/1
     ]
 
@@ -604,7 +604,7 @@ get-parse: function [
     ; ----------------------------------------
 
     foreach arg [rules terminals literals] [
-        if object? def: get arg [def: bind words-of :def :def]
+        if object? def: get/opt arg [def: bind words-of :def :def]
         set arg any [:def copy []]
     ]
 

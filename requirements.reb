@@ -1,15 +1,15 @@
 REBOL [
-	Title: "Requirements"
-	Version: 1.0.0
-	Rights: {
-		Copyright 2015 Brett Handley
-	}
-	License: {
-		Licensed under the Apache License, Version 2.0
-		See: http://www.apache.org/licenses/LICENSE-2.0
-	}
-	Author: "Brett Handley"
-	Purpose: {Specify and test requirements that code should meet.}
+    Title: "Requirements"
+    Version: 1.0.0
+    Rights: {
+        Copyright 2015 Brett Handley
+    }
+    License: {
+        Licensed under the Apache License, Version 2.0
+        See: http://www.apache.org/licenses/LICENSE-2.0
+    }
+    Author: "Brett Handley"
+    Purpose: {Specify and test requirements that code should meet.}
 ]
 
 ; -------------------------------------------------------------------------------
@@ -23,81 +23,81 @@ REBOL [
 
 either system/version > 2.100.0 [; Rebol3
 
-	throws-error: function [
-		condition [block!] {Bound to error object. Evaluated by ALL.}
-		test [block!]
-	] [
-		to-value if error? err: try test [
-			all bind/copy condition in err 'type
-		]
-	]
+    throws-error: function [
+        condition [block!] {Bound to error object. Evaluated by ALL.}
+        test [block!]
+    ] [
+        to-value if error? err: try test [
+            all bind/copy condition in err 'type
+        ]
+    ]
 
-	user-error: function [match [string! block!] test [block!]] [
-		if string? match [match: compose [(match) to end]]
-		all [
-			error? set/any 'err try test
-			string? err/arg1
-			parse err/arg1 match
-		]
-	]
+    user-error: function [match [string! block!] test [block!]] [
+        if string? match [match: compose [(match) to end]]
+        all [
+            error? set/any 'err try test
+            string? err/arg1
+            parse err/arg1 match
+        ]
+    ]
 ] [; Rebol2
 
-	throws-error: function [
-		condition [block!] {Bound to error object. Evaluated by ALL.}
-		test [block!]
-	] [
-		to-value if error? err: try test [
-			all bind/copy condition in disarm err 'type
-		]
-	]
+    throws-error: function [
+        condition [block!] {Bound to error object. Evaluated by ALL.}
+        test [block!]
+    ] [
+        to-value if error? err: try test [
+            all bind/copy condition in disarm err 'type
+        ]
+    ]
 
-	user-error: function [match [string! block!] test [block!]] [
-		if string? match [match: compose [(match) to end]]
-		all compose [
-			error? set/any 'err try test
-			err: disarm err
-			string? err/arg1
-			parse? err/arg1 match
-		]
-	]
+    user-error: function [match [string! block!] test [block!]] [
+        if string? match [match: compose [(match) to end]]
+        all compose [
+            error? set/any 'err try test
+            err: disarm err
+            string? err/arg1
+            parse? err/arg1 match
+        ]
+    ]
 
 ]
 
 requirements: function [
-	{Test requirements.}
-	about
-	block [block!] {Series of test blocks. A textual requirement begins the block (optional).}
-	/result
+    {Test requirements.}
+    about
+    block [block!] {Series of test blocks. A textual requirement begins the block (optional).}
+    /result
 ] [
-	results: new-line/all/skip collect [
-		foreach test block [
-			if not block? test [
-				fail [{Test must be a block. Got: } (mold test)]
-			]
-			value: _
-			error? set/any 'value try bind test 'throws-error
-			keep all [
-				set? 'value
-				logic? value
-				value
-			]
-			keep/only either string? test/1 [test/1] [test]
-		]
-	] true 2
+    results: new-line/all/skip collect [
+        foreach test block [
+            if not block? test [
+                fail [{Test must be a block. Got: } (mold test)]
+            ]
+            value: _
+            error? set/any 'value try bind test 'throws-error
+            keep all [
+                set? 'value
+                logic? value
+                value
+            ]
+            keep/only either string? test/1 [test/1] [test]
+        ]
+    ] true 2
 
-	remove-each [passed id] results [passed]
-	all-passed?: empty? results
+    remove-each [passed id] results [passed]
+    all-passed?: empty? results
 
-	if result [return all-passed?]
+    if result [return all-passed?]
 
-	either all-passed? [
-		compose/only [
-			(:about) passed
-		]
-	] [
-		new-line compose/only [
-			(:about) TODO
-			(new-line/all extract next results 2 true)
-		] true
-	]
+    either all-passed? [
+        compose/only [
+            (:about) passed
+        ]
+    ] [
+        new-line compose/only [
+            (:about) TODO
+            (new-line/all extract next results 2 true)
+        ] true
+    ]
 ]

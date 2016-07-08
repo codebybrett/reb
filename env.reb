@@ -1,28 +1,28 @@
 REBOL [
-	Title: "Environment"
-	Version: 1.0.0
-	Rights: {
-		Copyright 2015 Brett Handley
-	}
-	License: {
-		Licensed under the Apache License, Version 2.0
-		See: http://www.apache.org/licenses/LICENSE-2.0
-	}
-	Author: "Brett Handley"
-	Purpose: {Provide environment for scripts.}
+    Title: "Environment"
+    Version: 1.0.0
+    Rights: {
+        Copyright 2015 Brett Handley
+    }
+    License: {
+        Licensed under the Apache License, Version 2.0
+        See: http://www.apache.org/licenses/LICENSE-2.0
+    }
+    Author: "Brett Handley"
+    Purpose: {Provide environment for scripts.}
 ]
 
 ; -----------------------------------------------------------------------------
 ;
 ; env
 ;
-;	Defines an environment for scripts.
+;   Defines an environment for scripts.
 ;
 ;
 ; script-needs
 ;
-;	Script-Needs is intended to be metadata for a script.
-;	Each script should use script-needs only once near the top of the script.
+;   Script-Needs is intended to be metadata for a script.
+;   Each script should use script-needs only once near the top of the script.
 ;
 ; -----------------------------------------------------------------------------
 
@@ -30,175 +30,175 @@ REBOL [
 ;
 ; TODO:
 ;
-;	* Refresh file from url other than reb. Need a manifest?
+;   * Refresh file from url other than reb. Need a manifest?
 ;
 
 env: context [
 
-	master: https://raw.githubusercontent.com/codebybrett/reb/master/
+    master: https://raw.githubusercontent.com/codebybrett/reb/master/
 
-	base: either find [url!] to word! type-of system/script/args [
-		system/script/args
-	][
-		what-dir
-	]
+    base: either find [url!] to word! type-of system/script/args [
+        system/script/args
+    ][
+        what-dir
+    ]
 
-	logfn: func [message] [print mold new-line/all compose/only message false]
-	log: _ ; Set to logfn for logging.
+    logfn: func [message] [print mold new-line/all compose/only message false]
+    log: _ ; Set to logfn for logging.
 
-	log [env (compose [base (base) master (master)])]
+    log [env (compose [base (base) master (master)])]
 
-	scripts: context [
+    scripts: context [
 
-		used: make block! []
+        used: make block! []
 
-		refresh: function [
-			{Attempt to refresh each script in base directory from master.}
-		] [
+        refresh: function [
+            {Attempt to refresh each script in base directory from master.}
+        ] [
 
-			files: read base
-			remove-each file files [not parse? file [thru ".reb" | thru ".r"]]
+            files: read base
+            remove-each file files [not parse? file [thru ".reb" | thru ".r"]]
 
-			foreach file files [
-				either text: attempt [read location: master/:file][
-					log [refresh true (file)]
-					write base/:file rejoin [{; file: } location {^/; date: } now {^/^/} text]
-				][
-					log [refresh false (file)]
-				]
-			]
-			clear used
-			exit
-		]
-	]
+            foreach file files [
+                either text: attempt [read location: master/:file][
+                    log [refresh true (file)]
+                    write base/:file rejoin [{; file: } location {^/; date: } now {^/^/} text]
+                ][
+                    log [refresh false (file)]
+                ]
+            ]
+            clear used
+            exit
+        ]
+    ]
 
-	conditions?: func [
-		{Return true if the conditions are met. See script-environment.}
-		conditions [block!]
-	] [
-		all bind/copy conditions facts
-	]
+    conditions?: func [
+        {Return true if the conditions are met. See script-environment.}
+        conditions [block!]
+    ] [
+        all bind/copy conditions facts
+    ]
 
-	facts: context [
-		rebol3: (system/version > 2.100.0)
-		rebol2: (system/version < 2.100.0)
-		view: find? form system/product {view}
-	]
+    facts: context [
+        rebol3: (system/version > 2.100.0)
+        rebol2: (system/version < 2.100.0)
+        view: find? form system/product {view}
+    ]
 
-	retrieve: function [
-		{Retrieve a script.}
-		pattern [file! url!]
-	][
+    retrieve: function [
+        {Retrieve a script.}
+        pattern [file! url!]
+    ][
 
-		path: name: cached: script: _
-		set [path name] split-path pattern
+        path: name: cached: script: _
+        set [path name] split-path pattern
 
-		failed: make block! []
+        failed: make block! []
 
-		read-script: func [fullpath][
+        read-script: func [fullpath][
 
-			if not find failed fullpath [
-				script: context compose [
-					id: (name)
-					file: (fullpath)
-					text: attempt [
-						append failed fullpath
-						log [attempt-read (fullpath)]
-						to string! read fullpath
-					]
-					time: now/precise
-				]
-			]
+            if not find failed fullpath [
+                script: context compose [
+                    id: (name)
+                    file: (fullpath)
+                    text: attempt [
+                        append failed fullpath
+                        log [attempt-read (fullpath)]
+                        to string! read fullpath
+                    ]
+                    time: now/precise
+                ]
+            ]
 
-			script/text
-		]
+            script/text
+        ]
 
-		either any [url? path path = %./] [
+        either any [url? path path = %./] [
 
-			; Search for file if not already used.
+            ; Search for file if not already used.
 
-			either cached: find scripts/used name [
-				log [already-used (name)]
-			][
+            either cached: find scripts/used name [
+                log [already-used (name)]
+            ][
 
-				any [
-					read-script name
-					read-script base/:name
-					if url? pattern [read-script pattern]
-					read-script master/:name
-				]
-			]
-		] [
+                any [
+                    read-script name
+                    read-script base/:name
+                    if url? pattern [read-script pattern]
+                    read-script master/:name
+                ]
+            ]
+        ] [
 
-			; Specific file - run each time.
+            ; Specific file - run each time.
 
-			read-script pattern
-		]
+            read-script pattern
+        ]
 
-		if all [
-			not cached
-			not string? script/text
-		] [
-			fail [{Could not retrieve} (mold pattern)]
-		]
+        if all [
+            not cached
+            not string? script/text
+        ] [
+            fail [{Could not retrieve} (mold pattern)]
+        ]
 
-		script
-	]
+        script
+    ]
 
-	run: function [
-		{Run a script.}
-		search-file [file! url!]
-	] [
+    run: function [
+        {Run a script.}
+        search-file [file! url!]
+    ] [
 
-		file: _
+        file: _
 
-		script: retrieve search-file
+        script: retrieve search-file
 
-		either script [
+        either script [
 
-			if any [
-				not string? script/text
-				empty? script/text
-			][
-				fail [{Invalid script/text for} search-file]
-			]
+            if any [
+                not string? script/text
+                empty? script/text
+            ][
+                fail [{Invalid script/text for} search-file]
+            ]
 
-			file: clean-path script/file
-			log [run (file)]
-			do script/text
-			def: compose [
-				file (script/file)
-				;; search (search-file)
-				;; time (script/time)
-			]
-			new-line/all/skip def true 2
-			insert position: tail scripts/used reduce [script/id def]
-			new-line position true
-		][
+            file: clean-path script/file
+            log [run (file)]
+            do script/text
+            def: compose [
+                file (script/file)
+                ;; search (search-file)
+                ;; time (script/time)
+            ]
+            new-line/all/skip def true 2
+            insert position: tail scripts/used reduce [script/id def]
+            new-line position true
+        ][
 
-			log [not-run (search-file)]
-		]
+            log [not-run (search-file)]
+        ]
 
-		file
-	]
+        file
+    ]
 
 ]
 
 
 script-needs: function [
-	{Runs each script listed. Accepts mulitple files. A block preceeding a file is a predicate to be evaluated by script-environment?.}
-	needs [file! block!]
-	/local script
+    {Runs each script listed. Accepts mulitple files. A block preceeding a file is a predicate to be evaluated by script-environment?.}
+    needs [file! block!]
+    /local script
 ] [
-	needs: compose [(:needs)]
-	if not parse needs [
-		any [
-			pos: (pred: true) opt [set pred block! (pred: env/conditions? pred)]
-			set script [file! | url!] (if pred [env/run :script])
-		]
-	] [
-		fail [{Could not parse script-needs near:} (copy/part pos 40)]
-	]
+    needs: compose [(:needs)]
+    if not parse needs [
+        any [
+            pos: (pred: true) opt [set pred block! (pred: env/conditions? pred)]
+            set script [file! | url!] (if pred [env/run :script])
+        ]
+    ] [
+        fail [{Could not parse script-needs near:} (copy/part pos 40)]
+    ]
 ]
 
 env/base

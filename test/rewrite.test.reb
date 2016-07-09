@@ -17,12 +17,56 @@ script-needs [
     %../rewrite.reb
 ]
 
-requirements 'rewrite [
+
+search-test: requirements 'search [
+
+    [
+        [] = search [] []
+    ]
+
+    [
+        [x] = search [x] [skip]
+    ]
+
+    [
+        [z] = search [x [y [z]]] ['z]
+    ]
+
+    [
+        [y [z]] = search [x [y [z]]] ['y]
+    ]
+
+    [
+        [x y z] = collect [
+            search/all [x [y [z]]] [
+                p: word! (keep :p/1)
+            ]
+        ]
+    ]
+]
+
+rewrite-test: requirements 'rewrite [
 
     [
         [] = rewrite [] []
+    ]
+
+    [
         [] = rewrite [] [['x][]]
+    ]
+
+    [
         [z] = rewrite [x] [['x][y] ['y][z]]
+    ]
+
+    [
         [y] = rewrite/once [x] [['x][y] ['y][z]]
     ]
 ]
+
+requirements %rewrite.reb [
+
+    ['passed = last search-test]
+    ['passed = last rewrite-test]
+]
+

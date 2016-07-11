@@ -770,7 +770,7 @@ impose: function [
     {Reduce target expressions to their values within a block.}
     symbol [word! path! block!] {A word or block of words that denote the expressions.}
     block [block! paren!] {Block to modify.}
-    /func evaluate [function!] {A function like DO/next. DO/Next is the default.}
+    /func evaluate [function!] {A function like DO-NEXT. DO-NEXT is the default.}
     /only {Does not re-evaluate replaced expressions.}
     /unset {Unset! is retained in result.}
 ][

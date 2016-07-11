@@ -19,23 +19,18 @@ script-needs [
 
 requirements 'do-next [
 
-    [void? do-next [] []]
-
-    [equal? 1 do-next [1 2] []]
-
     [
-        do-next [] [value rest]
+        value: 1
         all [
-            void? get/any 'value
-            tail? rest
+            tail? do-next [] 'value
+            not set? 'value
         ]
     ]
 
     [
-        do-next [1 2] [value rest]
         all [
-            equal? value 1
-            equal? rest [2]
+            [2] = do-next [1 2] 'value
+            1 = value
         ]
     ]
 ]

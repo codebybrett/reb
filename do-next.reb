@@ -15,14 +15,15 @@ REBOL [
 
 
 do-next: function [
-    {Evaluate next expression in a block of source code. State as an object.}
+    {Evaluate next expression in a block of source code.}
     source [block! string!]
-    words [block!] {Words to be set to expression value and source position.}
+    word [word!] {Word set to the value of the evaluated expression.}
 ][
 
-    value: any [to-value first words 'value]
-    position: any [to-value second words 'position]
+    position: _
+    
+    set/any word do/next source 'position
 
-    set/any value do/next source position
+    position
 ]
 

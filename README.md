@@ -1,7 +1,7 @@
 reb
 ===
 
-Home location for rebol scripts based on Ren-C.
+Home location for rebol scripts based on [Ren-C](https://github.com/metaeducation/ren-c).
 A work in progress and likely to break as Ren-C changes.
 
 ### Usage ###

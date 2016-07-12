@@ -328,7 +328,7 @@ parsing-expression: function [
         condition: parsing-when match
         evaluate: get either next ['reducer]['do-next]
         evaluation: parsing-at input compose/deep [
-            rest: evaluate input 'value
+            rest: evaluate 'value input
             if not set? 'value [value: []]
             change/part input :value rest
         ]

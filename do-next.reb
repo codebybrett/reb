@@ -16,8 +16,8 @@ REBOL [
 
 do-next: function [
     {Evaluate next expression in a block of source code.}
-    source [block! string!]
     word [word!] {Word set to the value of the evaluated expression.}
+    source [block! string!]
 ][
 
     position: _

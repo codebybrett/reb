@@ -22,14 +22,14 @@ requirements 'do-next [
     [
         value: 1
         all [
-            tail? do-next [] 'value
+            tail? do-next 'value []
             not set? 'value
         ]
     ]
 
     [
         all [
-            [2] = do-next [1 2] 'value
+            [2] = do-next 'value [1 2]
             1 = value
         ]
     ]

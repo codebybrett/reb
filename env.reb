@@ -185,7 +185,7 @@ env: context [
 ]
 
 
-script-needs: function [
+script-needs: proc [
     {Runs each script listed. Accepts mulitple files. A block preceeding a file is a predicate to be evaluated by script-environment?.}
     needs [file! block!]
     /local script

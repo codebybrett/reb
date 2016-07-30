@@ -21,46 +21,22 @@ REBOL [
 ;
 ; -------------------------------------------------------------------------------
 
-either system/version > 2.100.0 [; Rebol3
-
-    throws-error: function [
-        condition [block!] {Bound to error object. Evaluated by ALL.}
-        test [block!]
-    ] [
-        to-value if error? err: try test [
-            all bind/copy condition in err 'type
-        ]
+throws-error: function [
+    condition [block!] {Bound to error object. Evaluated by ALL.}
+    test [block!]
+] [
+    to-value if error? err: try test [
+        all bind/copy condition in err 'type
     ]
+]
 
-    user-error: function [match [string! block!] test [block!]] [
-        if string? match [match: compose [(match) to end]]
-        all [
-            error? set/any 'err try test
-            string? err/arg1
-            parse err/arg1 match
-        ]
+user-error: function [match [string! block!] test [block!]] [
+    if string? match [match: compose [(match) to end]]
+    all [
+        error? set/any 'err try test
+        string? err/message
+        parse err/message match
     ]
-] [; Rebol2
-
-    throws-error: function [
-        condition [block!] {Bound to error object. Evaluated by ALL.}
-        test [block!]
-    ] [
-        to-value if error? err: try test [
-            all bind/copy condition in disarm err 'type
-        ]
-    ]
-
-    user-error: function [match [string! block!] test [block!]] [
-        if string? match [match: compose [(match) to end]]
-        all compose [
-            error? set/any 'err try test
-            err: disarm err
-            string? err/arg1
-            parse? err/arg1 match
-        ]
-    ]
-
 ]
 
 requirements: function [

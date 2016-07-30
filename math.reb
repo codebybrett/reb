@@ -71,7 +71,7 @@ math: function [
 
         left: compose code
 
-        ; Process any remaining expression tokens.
+        ; Process infix operators.
         while [
             lbp: any [
                 select [+ 10 - 10 * 20 / 20 ** 30] expression/1

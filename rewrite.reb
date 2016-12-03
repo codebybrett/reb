@@ -44,8 +44,8 @@ REBOL [
         ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
         POSSIBILITY OF SUCH DAMAGE.
     }
-    Date: 05-Jul-2016
-    Version: 2.4.0
+    Date: 03-Dec-2016
+    Version: 2.5.0
     History: [
         17-May-2006 1.1.0 "History start"
         17-May-2006 1.2.1 "First version"
@@ -60,6 +60,7 @@ REBOL [
                            Rewrite/only prevents reprocessing of a replacement in same pass. [Brett Handley]}
         13-Oct-2015 2.3.0 {Modify to work with Ren/C future bridge (r2r3-future.r).}
         05-Jul-2016 2.4.0 {Reaname /trace to /trace, remove copy behaviour. Allow global trace setting.}
+		03-Dec-2016 2.5.0 {Allow processing of any-block! and any-string!}
     ]
 ]
 
@@ -95,7 +96,7 @@ REBOL [
 
 search: func [
     "Search data recursively to satisfy a parse rule."
-    data [block! string!] "Data to search."
+    data [any-block! any-string!] "Data to search."
     rule [block!] "PARSE rule to use as pattern"
     /all {Match every occurrence of pattern. Returns position after last match. Default is stop at first match.}
     /local
@@ -142,7 +143,7 @@ search: func [
 
 rewrite: func [
     "Apply a list of rewrite rules to data"
-    data [block! string!] "Data to change"
+    data [any-block! any-string!] "Data to change"
     rules [block!] "List of rewrite rules"
     /trace {Override default trace function.} trace-fn [function!] {Takes a single argument.}
     /once {Only one full top down search and replace pass is performed.}

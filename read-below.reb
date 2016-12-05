@@ -1,11 +1,12 @@
 Rebol [
     Title: "read-below"
-    Date: 16-Oct-2015
+    Date: 6-Dec-2016
     File: %read-below.reb
     Purpose: {Reads all files and directories below specified directory.}
-    Version: 1.5.0
+    Version: 1.6.0
     Author: "Brett Handley"
     History: [
+        1.6.0 [6-Dec-2016 {Update for Ren-c changes.}]
         1.5.0 [16-Oct-2015 {Added /trace and dirize workaround for old rebols.}]
         1.4.0 [13-Oct-2015 {Use FAIL instead of making error directly.}]
         1.3.1 [12-Nov-2013 {Added read-below-paths} "Brett Handley"]
@@ -63,7 +64,6 @@ script-needs [
 
 read-below: func [
     {Read all directories below and including a given file path.}
-    [catch throw]
     path [file! url!] "Must be a directory (ending in a trailing slash)."
     /exclude exclude-files [file! url! block!] "Directories/files to be excluded from recursion/result."
     /foreach "Evaluates a block for each file or directory found."
@@ -94,7 +94,7 @@ read-below: func [
     ]
 
     ; Create process function
-    do-func: func compose [[throw] (:word)] body
+    do-func: func compose [(:word)] body
 
     ; Initialise queue
     queue: read path
@@ -102,16 +102,16 @@ read-below: func [
 
     ; Process queue
     set/any 'result to-value if not empty? queue [
-        until [
+        loop-until [
             file: first queue
             queue: remove queue
             if is-dir? file [file: dirize file]
             if not find exclude-files file [
                 do-func file
                 if #"/" = last file [
-                    files: read folder: join path file
+                    files: read folder: join-of path file
                     log [folder (folder) (new-line/all files true)]
-                    *foreach f files [insert queue join file f]
+                    *foreach f files [insert queue join-of file f]
                     queue: head queue
                 ]
             ]
@@ -131,7 +131,7 @@ read-below-paths: function [
     collect [
         foreach path paths [
             list: read-below path
-            repeat i length list [poke list i join :path list/:i]
+            repeat i length list [poke list i join-of :path list/:i]
             keep list
         ]
     ]

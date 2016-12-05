@@ -199,7 +199,7 @@ rewrite: func [
         quote (do event change/part mk1 new mk2)
     ]
 
-    process: either once [:do][:until]
+    process: either once [:do][:loop-until]
 
     process [
         if pause [do pause-body ask "? "]

@@ -12,14 +12,14 @@ REBOL [
 ]
 
 ; Motivation:
-;	Compose is useful but painful when you Want to have a paren as part of your output structure.
+;	Compose is useful but painful when you Want to have a group as part of your output structure.
 ;   A templating approach where a word represents a target for replacement is a simple way to get a desired structure.
 ;   For more complex needs, REWRITE is probably better.
 
 impose: function [
 	{Selectively replace specific words contained by a block by a value.}
 	symbol [word! block! object!] {Word(s) denoting expressions.}
-	block [block! paren!] {Block to modify.}
+	block [block! group!] {Block to modify.}
 	/using evaluate [function!] {Function taking a word, returning value of that word.}
 	/only {Insert series values as is.}
 ][
@@ -39,10 +39,10 @@ impose: function [
 
 	; Match against symbols.
 	match: remove collect [
-		foreach word symbol [
+		for-each word symbol [
 			keep '|
 			keep to lit-word! word
-			keep/only to paren! compose/only [value: evaluate (to lit-word! word)]
+			keep/only to group! compose/only [value: evaluate (to lit-word! word)]
 		]
 	]
 
@@ -56,7 +56,7 @@ impose: function [
 	; Deep search and replace.
 	rule: compose/deep/only [
 		some [
-			p1: match (to paren! action) :p1
+			p1: match (to group! action) :p1
 			| into rule
 			| skip
 		]

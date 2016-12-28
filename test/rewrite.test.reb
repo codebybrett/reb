@@ -56,11 +56,11 @@ rewrite-test: requirements 'rewrite [
     ]
 
     [
-        [z] = rewrite [x] [['x][y] ['y][z]]
+        [z] = rewrite copy [x] [['x][y] ['y][z]]
     ]
 
     [
-        [y] = rewrite/once [x] [['x][y] ['y][z]]
+        [y] = rewrite/once copy [x] [['x][y] ['y][z]]
     ]
 ]
 

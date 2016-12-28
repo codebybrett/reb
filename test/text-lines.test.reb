@@ -18,26 +18,26 @@ script-needs [
 
 encode-lines-test: requirements 'encode-lines [
 
-    [quote {**^/} = encode-lines {} {**} {  }]
-    [quote {**  x^/} = encode-lines {x} {**} {  }]
-    [quote {**  x^/**^/} = encode-lines {x^/} {**} {  }]
-    [quote {**^/**  x^/} = encode-lines {^/x} {**} {  }]
-    [quote {**^/**  x^/**^/} = encode-lines {^/x^/} {**} {  }]
-    [quote {**  x^/**    y^/**      z^/} = encode-lines {x^/  y^/    z} {**} {  }]
-    [quote "**^/**^/**^/" = encode-lines {^/^/} {**} {  }]
+    [quote {**^/} = encode-lines copy {} {**} {  }]
+    [quote {**  x^/} = encode-lines copy {x} {**} {  }]
+    [quote {**  x^/**^/} = encode-lines copy {x^/} {**} {  }]
+    [quote {**^/**  x^/} = encode-lines copy {^/x} {**} {  }]
+    [quote {**^/**  x^/**^/} = encode-lines copy {^/x^/} {**} {  }]
+    [quote {**  x^/**    y^/**      z^/} = encode-lines copy {x^/  y^/    z} {**} {  }]
+    [quote "**^/**^/**^/" = encode-lines copy {^/^/} {**} {  }]
 ]
 
 decode-lines-test: requirements 'decode-lines [
 
-    [quote {} = decode-lines {} {**} {} ]
-    [quote {} = decode-lines {**^/} {**} {  } ]
-    [quote {x} = decode-lines {**  x^/} {**} {  } ]
-    [quote {x^/} = decode-lines {**  x^/**^/} {**} {  } ]
-    [quote {^/x} = decode-lines {**^/**  x^/} {**} {  } ]
-    [quote {^/x^/} = decode-lines {**^/**  x^/**^/} {**} {  } ]
-    [quote {x^/  y^/    z} = decode-lines {**  x^/**    y^/**      z^/} {**} {  } ]
-    [quote {^/^/} = decode-lines "**^/**  ^/**^/" {**} {  }]
-    [quote {^/^/} = decode-lines "**^/**^/**^/" {**} {  }]
+    [quote {} = decode-lines copy {} {**} {} ]
+    [quote {} = decode-lines copy {**^/} {**} {  } ]
+    [quote {x} = decode-lines copy {**  x^/} {**} {  } ]
+    [quote {x^/} = decode-lines copy {**  x^/**^/} {**} {  } ]
+    [quote {^/x} = decode-lines copy {**^/**  x^/} {**} {  } ]
+    [quote {^/x^/} = decode-lines copy {**^/**  x^/**^/} {**} {  } ]
+    [quote {x^/  y^/    z} = decode-lines copy {**  x^/**    y^/**      z^/} {**} {  } ]
+    [quote {^/^/} = decode-lines copy "**^/**  ^/**^/" {**} {  }]
+    [quote {^/^/} = decode-lines copy "**^/**^/**^/" {**} {  }]
 ]
 
 lines-exceeding-test: requirements 'lines-exceeding [

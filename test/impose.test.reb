@@ -21,15 +21,15 @@ requirements 'impose [
 
     [
         x: 1
-        [structure (1)] = impose 'x [structure (x)]
+        [structure (1)] = impose 'x copy/deep [structure (x)]
     ]
 
     [
-        [w 1 2] = impose context [x: 1 y: 2] [w x y]
+        [w 1 2] = impose context [x: 1 y: 2] copy [w x y]
     ]
 
     [
-        [[1] [[2]]] = impose context [x: 1 y: 2] [[x] [[y]]]
+        [[1] [[2]]] = impose context [x: 1 y: 2] copy/deep [[x] [[y]]]
     ]
 
     [
@@ -37,6 +37,6 @@ requirements 'impose [
             x: [1 + y]
             y: [x - 2]
         ]
-        [1 + [x - 2]] = impose/only o impose o [x]
+        [1 + [x - 2]] = impose/only o impose o copy [x]
     ]
 ]

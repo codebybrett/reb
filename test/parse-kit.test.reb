@@ -125,7 +125,7 @@ impose-test: requirements 'impose [
 
     [
         f: 1
-        equal? [x 1 x] impose 'f [x f x]
+        equal? [x 1 x] impose 'f copy [x f x]
     ]
 ]
 

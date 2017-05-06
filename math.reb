@@ -74,7 +74,7 @@ math: function [
         ; Process infix operators.
         while [
             lbp: any [
-                select [+ 10 - 10 * 20 / 20 ** 30] expression/1
+                select [+ 10 - 10 * 20 / 20 ** 30] first expression
                 0
             ]
             lbp > rbp

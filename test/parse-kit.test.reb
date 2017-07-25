@@ -52,8 +52,8 @@ parsing-deep-test: requirements 'parsing-deep [
             parse? [x] parsing-deep [word!]
             parse? [1 x] parsing-deep [word!]
             parse? [1 [x]] parsing-deep [word!]
-            false? parse? [1 [x] 2] parsing-deep [word!]
-            false? parse? [1 [x] 2 [x]] parsing-deep [word!]
+            not parse? [1 [x] 2] parsing-deep [word!]
+            not parse? [1 [x] 2 [x]] parsing-deep [word!]
         ]
     ]
 ]
@@ -62,7 +62,7 @@ parsing-thru-test: requirements 'parsing-thru [
 
     [
         all [
-            false? parse? [] parsing-thru ['x]
+            not parse? [] parsing-thru ['x]
             parse? [x] parsing-thru ['x]
             parse? [1 2 x] parsing-thru ['x]
         ]
@@ -78,8 +78,9 @@ parsing-to-test: requirements 'parsing-to [
 
     [
         all [
-            false? parse? [] parsing-thru ['x]
-            parse? [1 2 x] parsing-thru ['x]
+            not parse? [] parsing-to ['x]
+            to-x: parsing-to ['x]
+            parse? [1 2 x] [to-x skip]
         ]
     ]
 
@@ -109,7 +110,7 @@ parsing-earliest-test: requirements 'parsing-earliest [
 
     [
         all [
-            false? parse? [] parsing-earliest []
+            not parse? [] parsing-earliest []
             parse? [x] parsing-earliest [skip]
         ]
     ]

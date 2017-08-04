@@ -16,7 +16,7 @@ script-needs [
     %../load-until-blank.reb
 ]
 
-requirements %load-until-blank [
+requirements 'load-until-blank [
 
     [blank? load-until-blank {}]
     [[[1 [2]] ""] = load-until-blank {1 [2]^/}]

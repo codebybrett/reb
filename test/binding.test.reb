@@ -27,7 +27,7 @@ requirements 'binding [
 
     [ {Bind first word of any-block!}
         all [
-            ["obj/a1" "a1"] = reduce binding/first obj copy-locked [a1 a1]
+            ["obj/a1" "a1"] = reduce binding/first obj copy [a1 a1]
             {x} = get binding/first obj copy 'b1/x
         ]
     ]

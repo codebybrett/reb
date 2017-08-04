@@ -67,7 +67,6 @@ date: binding/custom/object [parser] [
 			pad: (function [length value] [head insert/dup value: form value #"0" length - length? value])
 			string: join-all [form date/year #"-" pad 2 date/month #"-" pad 2 date/day]
 			if time: get 'date/time [
-				dump [date time]
 				second: decimal: _
 				parse form time/second [copy second [to #"." | to end] opt [copy decimal to end]]
 				if parse decimal [#"." some #"0"] [decimal: {}]

@@ -25,7 +25,7 @@ script-needs [
 
 digit: charset {0123456789}
 
-date: binding/custom/object [parser] [
+date: binding/custom/object [parser] copy-source/deep [
 
 	advance: binding/custom/object [] [
 

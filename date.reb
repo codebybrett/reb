@@ -21,6 +21,7 @@ REBOL [
 
 script-needs [
 	%binding.reb
+	%copy-source.reb
 ]
 
 digit: charset {0123456789}

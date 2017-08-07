@@ -61,6 +61,13 @@ requirements %dates.test.reb [
     [error? try [difference date-110 date-100]]
     [error? try [difference date-100 date-100]]
 
+    [date-100 <= date-100]
+    [date-110 <= date-110]
+    [date-111 <= date-111]
+
+    [error? try [date-111 <= date-110]]
+    [error? try [date-110 <= date-100]]
+
     ;
     ; Mappings
 

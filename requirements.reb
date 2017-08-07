@@ -33,7 +33,7 @@ throws-error: function [
 user-error: function [match [string! block!] test [block!]] [
     if string? match [match: compose [(match) to end]]
     all [
-        error? set/any 'err try test
+        error? set/only 'err try test
         string? err/message
         parse err/message match
     ]
@@ -51,7 +51,7 @@ requirements: function [
                 fail [{Test must be a block. Got: } (mold test)]
             ]
             value: _
-            error? set/any 'value try bind test 'throws-error
+            error? set/only 'value try bind test 'throws-error
             keep all [
                 set? 'value
                 logic? value

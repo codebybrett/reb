@@ -51,14 +51,14 @@ excel-text: function [
 	]
 	result: copy {}
 	either block? data [
-		foreach row data [append result row-format row]
+		for-each row data [append result row-format row]
 	][
 		iterate data [append result row-format data/value]
 	]
 	result
 ]
 
-sqlencoder: binding/custom/object copy-source [
+sqlencoder: binding/custom/object [
 	value type value-list
 	type-list
 	name-list name-encoding
@@ -75,7 +75,7 @@ sqlencoder: binding/custom/object copy-source [
 		values [block!]
 	][
 		result: copy []
-		foreach x values [append result reduce [{, } value :x]]
+		for-each x values [append result reduce [{, } value :x]]
 		remove result ; First seperator.
 		unspaced result
 	]
@@ -90,7 +90,7 @@ sqlencoder: binding/custom/object copy-source [
 		names [block!]
 	][
 		result: copy []
-		foreach x names [append result reduce [{, } name-encoding :x]]
+		for-each x names [append result reduce [{, } name-encoding :x]]
 		remove result ; First separator.
 		unspaced result
 	]

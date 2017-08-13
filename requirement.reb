@@ -16,10 +16,26 @@ REBOL [
 	]
 ]
 
+; The original motivations for requirement in R2 were:
+; * to locate an assertion in code
+; * to positively state the condition that is expected in English
+; * to provide a postively stated error message when the condition fails
+;   by reusing the description (ASSERT not being end user friendly).
+; * allow automated extraction of requirements from scripts
+;
+; I don't think REQUIREMENT has lived up to these goals, but it is an interesting
+; experiment to reflect upon.
+;
+; One problem is that the description gets muddied with code to produce a useful error message.
+; Another point is that FAIL has been introduced in Ren-c which has implications for REQUIREMENT.
+; It may be that REQUIREMENT should have a description, a condition and a failure reason.
+;
+; Require is a nicer name, which is why I haven't used it, it could easily
+; become a built in function.
+
 
 requirement: function [
 	{Requires and documents a condition that must be true, else throw an error.}
-	[catch]
 	description [string! block!]
 	conditions [block!]
 ] [

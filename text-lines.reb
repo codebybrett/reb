@@ -60,7 +60,7 @@ encode-lines: func [
     text
 ]
 
-foreach-line: func [
+for-each-line: func [
     {Iterate over text lines.}
     'record [word!] {Word set to metadata for each line.}
     text [string!] {Text with lines.}
@@ -68,7 +68,7 @@ foreach-line: func [
     /local eol
 ] [
 
-    set/any 'result while [not tail? text] [
+    set/only 'result while [not tail? text] [
 
         eol: any [
             find text newline
@@ -81,7 +81,7 @@ foreach-line: func [
         do body
     ]
 
-    get/any 'result
+    get/only 'result
 ]
 
 lines-exceeding: function [

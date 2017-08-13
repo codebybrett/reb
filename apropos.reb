@@ -31,7 +31,7 @@ apropos: func [
         ]
 
         block! [
-            foreach context reference [apropos/binding context body]
+            for-each context reference [apropos/binding context body]
         ]
 
         path! [

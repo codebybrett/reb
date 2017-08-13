@@ -47,7 +47,7 @@ visit-tree: func [
                     map-each item at node 4 [visit item]
                 ]
             ]
-            recurse: func [][foreach item at node 4 [visit item]]
+            recurse: func [][for-each item at node 4 [visit item]]
 
             (bind/copy body 'visit)
 
@@ -92,7 +92,7 @@ remove-parents: function [
     tree [block!]
 ][
 
-    foreach node at tree 4 [
+    for-each node at tree 4 [
         if block? node [remove-parents node]
     ]
     remove at tree 2
@@ -249,7 +249,7 @@ infill-trees: function [
     if not empty? trees [
 
         position: trees/1/2/position
-        foreach tree trees [infill-node tree]
+        for-each tree trees [infill-node tree]
     ]
 
     trees

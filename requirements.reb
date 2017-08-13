@@ -46,7 +46,7 @@ requirements: function [
     /result
 ] [
     results: new-line/all/skip collect [
-        foreach test block [
+        for-each test block [
             if not block? test [
                 fail [{Test must be a block. Got: } (mold test)]
             ]

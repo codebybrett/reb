@@ -220,7 +220,7 @@ parsing-deep: func [
     ]
 
     set-words: collect [
-        foreach word [pattern next-position recursion-guard] [
+        for-each word [pattern next-position recursion-guard] [
             if not set? word [set word _]
             keep map-each word set-words-of/deep any [get word []] [to word! word]
         ]
@@ -324,7 +324,7 @@ parsing-expression: function [
             x: to lit-word! :x
             compose/deep/only [(:x) | (parsing-when [path!]) into [(:x) to end]]
         ]
-        match: remove collect [foreach x compose [(:symbol)] [keep compose [| (rule :x)]]]
+        match: remove collect [for-each x compose [(:symbol)] [keep compose [| (rule :x)]]]
         condition: parsing-when match
         evaluate: get either next ['reducer]['do-next]
         evaluation: parsing-at input compose/deep [
@@ -381,7 +381,7 @@ parsing-rewrite: function [
         ; Please see http://www.colellachiara.com/soft/Misc/rewrite.r
 
         rules*: make block! 16
-        foreach [pattern production] rules [
+        for-each [pattern production] rules [
             insert insert/only insert/only tail rules* pattern make paren! compose/only [
                 prod: compose/deep (production)
             ] '|
@@ -604,8 +604,8 @@ get-parse: function [
     ; Initialise.
     ; ----------------------------------------
 
-    foreach arg [rules terminals literals] [
-        if object? def: get/opt arg [def: bind words-of :def :def]
+    for-each arg [rules terminals literals] [
+        if object? def: get/only arg [def: bind words-of :def :def]
         set arg any [:def copy []]
     ]
 
@@ -649,7 +649,7 @@ get-parse: function [
 
     ] node
 
-    foreach rule rules [
+    for-each rule rules [
         restore-rule :rule ; In case last run was stopped unexpectedly.
         on-parsing :rule :do-rule-event
     ]
@@ -686,7 +686,7 @@ get-parse: function [
 
     ]
 
-    foreach terminal terminals [
+    for-each terminal terminals [
         restore-rule terminal ; In case last run was stopped unexpectedly.
         on-parsing :terminal :do-terminal-event
     ]
@@ -705,7 +705,7 @@ get-parse: function [
 
     ] node
 
-    foreach literal literals [
+    for-each literal literals [
         restore-rule literal ; In case last run was stopped unexpectedly.
         on-parsing/literal :literal :do-literal-event
     ]
@@ -717,7 +717,7 @@ get-parse: function [
     output: tail compose/only [root (_) (copy [type root position _ length _])]
     try-result: _
     if error [set :error-state _]
-    if error? set/any 'try-result try [do body] [
+    if error? set/only 'try-result try [do body] [
         if error [
             set :error-state compose/only [
                 tree (output)
@@ -738,8 +738,8 @@ get-parse: function [
     ; Cleanup and Return result
     ; ----------------------------------------
 
-    foreach arg [rules terminals literals] [
-        foreach rule get arg [
+    for-each arg [rules terminals literals] [
+        for-each rule get arg [
             restore-rule rule
         ]
     ]
@@ -748,7 +748,7 @@ get-parse: function [
         out (output)
     ]
 
-    if error? get/any 'try-result [
+    if error? get/only 'try-result [
         if error [
             set :error-state compose [
                 error (get :error-state)

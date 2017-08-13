@@ -22,7 +22,7 @@ do-next: function [
 
     position: _
     
-    set/any word do/next source 'position
+    set/only word do/next source 'position
 
     position
 ]

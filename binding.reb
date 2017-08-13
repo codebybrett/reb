@@ -42,7 +42,7 @@ binding: make object! [
 			block: copy block
 			words: collect [
 				keep 'self
-				foreach x words [if any-word? :x [keep to-word :x]]
+				for-each x words [if any-word? :x [keep to-word :x]]
 			]
 
 			; Create new object.

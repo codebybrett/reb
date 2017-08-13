@@ -59,7 +59,7 @@ env: context [
             files: read base
             remove-each file files [not parse? file [thru ".reb" | thru ".r"]]
 
-            foreach file files [
+            for-each file files [
                 either text: attempt [read location: master/:file][
                     log [refresh true (file)]
                     write base/:file rejoin [{; file: } location {^/; date: } now {^/^/} text]

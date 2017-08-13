@@ -66,14 +66,14 @@ read-below: func [
     {Read all directories below and including a given file path.}
     path [file! url!] "Must be a directory (ending in a trailing slash)."
     /exclude exclude-files [file! url! block!] "Directories/files to be excluded from recursion/result."
-    /foreach "Evaluates a block for each file or directory found."
+    /for-each "Evaluates a block for each file or directory found."
     'word [word!] "Word set to each file or directory."
     body [block!] "Block to evaluate for each file or directory."
     /trace {Logs each folder read.}
-    /local queue file-list result file do-func *foreach files folder log
+    /local queue file-list result file do-func *for-each files folder log
 ] [
 
-    *foreach: get bind 'foreach 'do
+    *for-each: get bind 'for-each 'do
 
     log: all [
         trace
@@ -87,7 +87,7 @@ read-below: func [
     if not exclude [exclude-files: []]
 
     ; Initialise parameters
-    if not foreach [
+    if not for-each [
         word: 'file
         file-list: make block! 10000
         body: [insert tail file-list file]
@@ -101,7 +101,7 @@ read-below: func [
     log [folder (path) (new-line/all queue true)]
 
     ; Process queue
-    set/any 'result to-value if not empty? queue [
+    set/only 'result to-value if not empty? queue [
         loop-until [
             file: first queue
             queue: remove queue
@@ -111,7 +111,7 @@ read-below: func [
                 if #"/" = last file [
                     files: read folder: join-of path file
                     log [folder (folder) (new-line/all files true)]
-                    *foreach f files [insert queue join-of file f]
+                    *for-each f files [insert queue join-of file f]
                     queue: head queue
                 ]
             ]
@@ -120,8 +120,8 @@ read-below: func [
     ]
 
     ; Return result.
-    if not foreach [result: file-list]
-    get/any 'result
+    if not for-each [result: file-list]
+    get/only 'result
 ]
 
 
@@ -129,7 +129,7 @@ read-below-paths: function [
     paths [block!]
 ][
     collect [
-        foreach path paths [
+        for-each path paths [
             list: read-below path
             repeat i length list [poke list i join-of :path list/:i]
             keep list

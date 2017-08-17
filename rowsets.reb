@@ -163,8 +163,14 @@ comment {
 		Update will only change the fields of an object that have been specified in the Update block,
 		so that a QUERY on the object will be accurate.
 
+	Other Notes
+		* The structure of [words [...] rows [...]] was chosen with the idea
+		  that other key pairs might be added later. Not sure if this is necessary
+		  if those new key pairs are just meta data. Meta data might be better
+		  carried separately.
+
 	To Do:
-		* Consider a grouping command.  Define a comparison function to determine if two rows are in same group (returns zero.)
+		* Consider a grouping command.
 		* Consider adding a merge join for sorted rowsets.
 }
 
@@ -342,11 +348,16 @@ spaces will be converted to hypens).}
 		][
 			pretty compose/only [
 				words (copy words)
-				rows (do compose/deep/only [collect [for-each (words) series [keep/only reduce (words)]]])
+				rows (
+					do compose/deep/only [
+						collect [
+							for-each (words) series [keep/only reduce (words)]
+						]
+					]
+				)
 			]
 
 		]
-
 	]
 
 	internal: make object! [
@@ -383,7 +394,11 @@ spaces will be converted to hypens).}
 			body: copy/deep body
 
 			; Get current columns of sources.
-			columns: collect [for-each rowsource rowsources [src: get rowsource keep src/words]]
+			columns: collect [
+				for-each rowsource rowsources [
+					src: get rowsource keep src/words
+				]
+			]
 
 			; Capture new rowset user variable if any.
 			if parse body [issue! to end][
@@ -393,7 +408,7 @@ spaces will be converted to hypens).}
 			; Define new rowset.
 			remove-each x specs: copy body [
 				any [find columns :x]
-			] ; Workaround (R3 bug: Exclude does not support paths yet).
+			] ; R3 bug workaround: Exclude does not support paths. Not needed for Ren-C.
 
 			either object-notation: not empty? specs [
 				; Set-words declare the new rowset's words.
@@ -460,13 +475,13 @@ spaces will be converted to hypens).}
 			set-row: function [positions] set-row
 			unset-row: does unset-row
 
+			; Query object is a type of cursor that supports each ultimate operation.
 			binding/custom/object [] [
 				body: (body)
 				new: (new)
 				set: (:set-row)
 				unset: (:unset-row)
 			]
-
 		]
 
 		query-keyword: make object! [
@@ -683,15 +698,21 @@ spaces will be converted to hypens).}
 			] [
 				require-query-source {select} source
 
+				; * Keyword.
 				if all [word? :body '* = body] [
 					body: collect [for-each rowsource source/rowsources [src: get rowsource keep src/words]]
 				]
+
+				; Select single column by name.
 				if any-word? body [body: reduce [to word! body]]
 
 				qry: bind-query body source/rowsources
 
-				if empty? words-of qry/new [fail {No select columns defined. Use simple field names or use object creation notation for complex expressions.}]
+				if empty? words-of qry/new [
+					fail {No select columns defined. Use simple field names or use object creation notation for complex expressions.}
+				]
 
+				; Iterate the rows, calculate new row and append it to result.
 				rows: make block! length? source/positions
 				for-each row source/positions compose/only [
 					qry/set row
@@ -699,11 +720,13 @@ spaces will be converted to hypens).}
 					(either series ['append]['append/only]) rows reduce (words-of qry/new)
 				]
 				qry/unset
-
 				words: unbind words-of qry/new
-				length: 1 if series [length: length? words]
+
+				length: 1
+				if series [length: length? words]
 				if any [not series greater? length? rows length] [
-					new-line/all/skip rows true length]
+					new-line/all/skip rows true length
+				]
 				if value [return rows]
 
 				compose/only [
@@ -720,6 +743,8 @@ spaces will be converted to hypens).}
 				require-query-source {update} source
 
 				qry: bind-query body source/rowsources
+
+				; Can update only first named rowsource.
 				src: get source/rowsources/1
 
 				for-each row source/positions compose/only [
@@ -740,13 +765,13 @@ spaces will be converted to hypens).}
 				require-query-source {update} source
 				src: get source/rowsources/1
 
-				delete-list: sort/reverse unique collect [for-each row source/positions [keep row/1]]
+				delete-list: sort/reverse unique collect [
+					for-each row source/positions [keep row/1]
+				]
 				for-each row delete-list [src/delete row]
 
 				exit ; All query source rows are deleted.
 			]
-
-
 		]
 	]
 

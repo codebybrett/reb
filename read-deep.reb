@@ -52,7 +52,7 @@ read-deep: function [
 
     while [not tail? queue][
         path: take queue
-        append result path
+        append result :path ; Possible void.
     ]
 
     unless full [

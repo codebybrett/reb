@@ -38,7 +38,7 @@ read-deep-seq: function [
 
 read-deep: function [
     {Return files and folders using recursive read strategy.}
-    root [file! url!]
+    root [file! url! block!]
     /full {Includes root path and retains full paths instead returning relative paths.}
     /strategy {Allows Queue building to be overridden.}
     take [function!] {TAKE next item from queue, building the queue as necessary.}
@@ -47,7 +47,7 @@ read-deep: function [
 
     result: make block! []
 
-    queue: reduce [root]
+    queue: compose [(root)]
 
     while [not tail? queue][
         path: take queue
@@ -63,5 +63,5 @@ read-deep: function [
         ]
     ]
 
-    lock result
+    result
 ]

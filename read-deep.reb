@@ -40,13 +40,12 @@ read-deep: function [
     {Return files and folders using recursive read strategy.}
     root [file! url!]
     /full {Includes root path and retains full paths instead returning relative paths.}
-    /into {Insert into a buffer instead (returns position after insert)}
-    result [block!] {The buffer series (modified)}
     /strategy {Allows Queue building to be overridden.}
     take [function!] {TAKE next item from queue, building the queue as necessary.}
 ][
-    unless into [result: make block! []]
     unless strategy [take: :read-deep-seq]
+
+    result: make block! []
 
     queue: reduce [root]
 
@@ -58,11 +57,11 @@ read-deep: function [
     unless full [
         remove result ; No need for root in result.
         len: length of root
-        foreach path result [
-            remove/part path len
+        for i 1 length of result 1 [
+            ; Strip off root path from locked paths.
+            poke result i copy skip result/:i len
         ]
     ]
 
-    unless tail? result [new-line/all result true]
-    either into [tail result] [result]
+    lock result
 ]

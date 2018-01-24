@@ -366,7 +366,7 @@ spaces will be converted to hypens).}
 			length [integer!]
 			/skip size [integer!]
 		] [
-			size: default 1
+			size: default [1]
 			result: make block! 1 + divide length size
 			for i 1 length size [append/only result reduce [i]]
 			result
@@ -450,9 +450,10 @@ spaces will be converted to hypens).}
 			functions: collect [
 				for-each word [position row sourcetype value words] [
 					keep to set-word! unspaced [{rowset.} form word]
-					keep compose/deep [
+					keep compose/deep/only [
 						function ['name [word!]] [
-							if not pos: find rowsources name [
+							sources: (rowsources) ; We will outlive context of 'rowsources.
+							if not pos: find sources name [
 								fail [unspaced [(unspaced [{rowset.} form word]) { cannot use } uppercase form name {. } uppercase form name { is not a rowset source.} ]]
 							]
 							rowsource: get pos/1

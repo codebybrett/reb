@@ -131,7 +131,7 @@ read-below-paths: function [
     collect [
         for-each path paths [
             list: read-below path
-            repeat i length list [poke list i join-of :path list/:i]
+            repeat i length of list [poke list i join-of :path list/:i]
             keep list
         ]
     ]

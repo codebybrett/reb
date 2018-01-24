@@ -353,8 +353,8 @@ parsing-matched: function [
 
     use [result positions position start] [
         collect [
-            keep compose/only [(to paren! compose [positions: array (length rules)]) start:]
-            for i 1 length rules 1 [
+            keep compose/only [(to paren! compose [positions: array (length of rules)]) start:]
+            for i 1 length of rules 1 [
                 keep compose/deep/only [
                     :start (to paren! [position: _]) opt [(:rules/:i) position:] (to paren! compose [poke positions (i) position])
                 ]

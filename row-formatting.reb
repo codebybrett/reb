@@ -30,7 +30,7 @@ value-types?: function [
 	map-each value block [type-of/word :value]
 ]
 
-pad: (function [length value] [head insert/dup value: form value #"0" length - length? value])
+pad: (function [length value] [head insert/dup value: form value #"0" length - length of value])
 
 excel-text: function [
 	{Emit excel text.}

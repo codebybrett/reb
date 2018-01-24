@@ -24,7 +24,7 @@ script-needs [
 test-db: clean-path %test.s3db
 
 connection-string: join-all [
-    {DSN=SQLite3 Datasource;Database=} (to-local-file test-db)
+    {DSN=SQLite3 Datasource;Database=} (file-to-local test-db)
 ]
 
 odbc-spec: compose [

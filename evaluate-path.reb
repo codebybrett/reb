@@ -21,7 +21,7 @@ either system/version > 2.100.0 [; Rebol3
     ] [
         ; Workaround bug.
         evaluate-path: func [path] [
-            if 1 = length :path [path: first :path]
+            if 1 = length of :path [path: first :path]
             get :path
         ]
     ] [

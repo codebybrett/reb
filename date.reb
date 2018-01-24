@@ -65,7 +65,7 @@ date: binding/custom/object [parser] copy-source/deep [
 			{MS Excel Date Time Format string from Date.}
 			date [date!]
 		] [
-			pad: (function [length value] [head insert/dup value: form value #"0" length - length? value])
+			pad: (function [length value] [head insert/dup value: form value #"0" length - length of value])
 			string: join-all [form date/year #"-" pad 2 date/month #"-" pad 2 date/day]
 			if time: get 'date/time [
 				second: decimal: _
@@ -83,7 +83,7 @@ date: binding/custom/object [parser] copy-source/deep [
 			date [date!]
 			/extended {Use extended format.}
 		] [
-			pad: (function [length value] [head insert/dup value: form value #"0" length - length? value])
+			pad: (function [length value] [head insert/dup value: form value #"0" length - length of value])
 			either extended [dsep: {-} tsep: {:}][dsep: {} tsep: {}]
 			string: join-all [form date/year dsep pad 2 date/month dsep pad 2 date/day]
 			if time: get 'date/time [

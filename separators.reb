@@ -36,7 +36,7 @@ interpose: function [
 	/skip {Treat the series as records of fixed size.} size [integer!] {Size of each record.}
 ][
 	skip: get bind 'skip 'do ; Default meaning of skip.
-	size: default 1
+	size: default [1]
 	if (size + 1) > length? series [return copy series]
 	length: add length? series to integer! (divide length? series size)
 	result: make type-of series length

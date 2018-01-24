@@ -36,7 +36,7 @@ apropos: func [
 
         path! [
             if not only [
-                for i 1 (subtract length reference 1) 1 [
+                for i 1 (subtract length of reference 1) 1 [
                     bind body evaluate-path copy/part reference i
                 ]
             ]

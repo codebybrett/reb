@@ -65,3 +65,37 @@ read-deep: function [
 
     result
 ]
+
+;; Tree result.
+;; Note: Could be processed by visit-tree.
+;; TODO: How to handle context of the paths, if wanting to linearise it.
+
+read-tree: function [
+    {Return a tree from a deep read.}
+    path [file! url!]
+][
+
+    recurse: function [
+        path
+    ][
+
+        tree: read path
+        
+        insert/only tree last split-path path 
+
+        for i 2 length? tree 1 [
+            item: pick tree i
+            if #"/" = last item [
+                poke tree i recurse join-of path :item
+            ]
+        ]
+
+        new-line/all tree true
+    ]
+
+    tree: recurse path
+
+    poke tree 1 clean-path path ; A useful first path value.
+
+    new-line tree true
+]

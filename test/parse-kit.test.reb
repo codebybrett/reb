@@ -158,47 +158,6 @@ rule-modification-tests: requirements 'rule-modification-tests [
     ]
 ]
 
-get-parse-test: requirements 'get-parse-test [
-
-    [
-        equal? [root _ [type root position _ length _]] get-parse [][]
-    ]
-
-    [
-        r: [word!]
-        tree: get-parse [parse [x] r] [r]
-        all [
-            equal? 4 length of tree ; [name parent properties child]
-            equal? tree/4/1 'r ; Node name.
-            equal? tree/4/3 [type rule position [x] length 1] ; Node properties.
-        ]
-    ]
-
-    [
-        tree: get-parse/literal [parse [x] r] [r] [r]
-        equal? tree/4/3 [type literal position [x] length 1]
-    ]
-
-    [
-        tree: get-parse/terminal [parse [x] r] [r] [r]
-        equal? tree/4/3 [type terminal position [x] length 1]
-    ]
-
-    [
-        r1: [r2 r3]
-        r2: [word!]
-        r3: [integer!]
-        tree: get-parse [parse [x 1] r1] [r1 r2 r3]
-        all [
-            equal? 4 length of tree ; [name parent properties child]
-            equal? tree/4/1 'r1 ; Node name.
-            equal? 5 length of tree/4 ; [name parent properties child1 child2]
-            equal? tree/4/4/1 'r2 ; Node name.
-            equal? tree/4/5/1 'r3 ; Node name.
-        ]
-    ]
-]
-
 requirements %parse-kit.reb [
 
     ['passed = last parsing-at-test]
@@ -209,5 +168,4 @@ requirements %parse-kit.reb [
     ['passed = last impose-test]
     ['passed = last after-test]
     ['passed = last rule-modification-tests]
-    ['passed = last get-parse-test]
 ]

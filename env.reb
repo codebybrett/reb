@@ -57,7 +57,7 @@ env: context [
         ] [
 
             files: read base
-            remove-each file files [not parse? file [thru ".reb" | thru ".r"]]
+            remove-each file files [parse file [thru ".reb" | thru ".r"]]
 
             for-each file files [
                 either text: attempt [read location: master/:file][
@@ -82,7 +82,7 @@ env: context [
     facts: context [
         rebol3: (system/version > 2.100.0)
         rebol2: (system/version < 2.100.0)
-        view: find? form system/product {view}
+        view: did find form system/product {view}
     ]
 
     retrieve: function [

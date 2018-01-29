@@ -213,7 +213,7 @@ rowset: binding/custom/object [errors internal pretty] copy-source/deep [
 			column: compose [(:column)]
 			insert at source/words number :column
 			if select source 'types [insert at source/types number 'any-type!]
-			values: head insert/dup copy [] _ length? column
+			values: head insert/dup copy [] _ length of column
 			for-each row source/rows [insert at row number values]
 			return source
 		]
@@ -226,7 +226,7 @@ rowset: binding/custom/object [errors internal pretty] copy-source/deep [
 		] [
 			internal/require-rowset {delete} source
 			column: compose [(:column)]
-			repeat i length? column [if not integer? column/:i [poke column i index? find source/words column/:i]]
+			repeat i length of column [if not integer? column/:i [poke column i index? find source/words column/:i]]
 			edit: copy []
 			for-each i head reverse sort column [append edit compose [remove at block (i)]]
 			edit: func [block] edit
@@ -245,7 +245,7 @@ rowset: binding/custom/object [errors internal pretty] copy-source/deep [
 
 		if not empty? errors: collect [
 			for-each word [words rows] [
-				either find? source word [
+				either did find source word [
 					if not block? select source word [
 						keep rejoin [{Expected block value for } uppercase form word {.}]
 					]
@@ -295,9 +295,9 @@ rowset: binding/custom/object [errors internal pretty] copy-source/deep [
 				]
 
 				; build data data
-				data: make block! (length? block) * length? columns
+				data: make block! (length of block) * length of columns
 				repeat record block [
-					row: make block! length? columns
+					row: make block! length of columns
 					repeat column columns [insert/only tail row any [select/only/case record column :value]]
 					insert/only tail data row
 				]
@@ -380,7 +380,7 @@ spaces will be converted to hypens).}
 
 		require-query-source: function [name source] [
 			requirement rejoin [form name { requires a valid query source.}] [
-				all map-each word [rowsources positions] [find? source word]
+				all map-each word [rowsources positions] [did find source word]
 			]
 		]
 
@@ -468,7 +468,7 @@ spaces will be converted to hypens).}
 			; Build row processing functions.
 			set-row: copy []
 			unset-row: copy []
-			repeat i length? rowsources [
+			repeat i length of rowsources [
 				src: get rowsources/:i
 				append set-row compose [(in src 'set) pick positions (i)]
 				append unset-row compose [(in src 'unset)]
@@ -513,7 +513,7 @@ spaces will be converted to hypens).}
 				set rowsources/1 rowsource
 				compose/only/deep [
 					rowsources (rowsources)
-					positions (indicies length? source/rows)
+					positions (indicies length of source/rows)
 				]
 			]
 
@@ -544,7 +544,7 @@ spaces will be converted to hypens).}
 					row: position: _
 					set: function [index <with> row position] compose/only [set (words-of value) row: at source position: index]
 					update: function [new][change row reduce bind/copy (words-of value) new]
-					delete: function [index] compose [remove/part at source index (length? words)]
+					delete: function [index] compose [remove/part at source index (length of words)]
 					unset: does compose/only [row: position: _ unset (words-of value)]
 					set self/name value
 				]
@@ -552,7 +552,7 @@ spaces will be converted to hypens).}
 				set rowsources/1 rowsource
 				compose/only/deep [
 					rowsources (rowsources)
-					positions (indicies/skip length? source length? words)
+					positions (indicies/skip length of source length of words)
 				]
 			]
 
@@ -563,7 +563,7 @@ spaces will be converted to hypens).}
 				<with> set unset
 			] [
 				requirement {From-Iterator requires an iterator that supports [HEAD INDEX? AT].} [
-					all map-each word [next tail? index? at] [find? in iterator word]
+					all map-each word [next tail? index? at] [did find in iterator word]
 				]
 				name: to word! name ; Convert issue.
 				rowsource: binding/custom/object [value source row position] copy-source/deep [
@@ -621,7 +621,7 @@ spaces will be converted to hypens).}
 				set rowsources/1 rowsource
 				compose/only/deep [
 					rowsources (rowsources)
-					positions (indicies length? source)
+					positions (indicies length of source)
 				]
 			]
 
@@ -646,7 +646,7 @@ spaces will be converted to hypens).}
 				either empty? body [
 					positions: copy []
 				] [
-					positions: make block! multiply length? source/positions length? join-source/positions
+					positions: make block! multiply length of source/positions length of join-source/positions
 					for-each source-row source/positions compose/only/deep [
 						for-each joining-row join-source/positions [
 							row: append copy source-row joining-row
@@ -714,7 +714,7 @@ spaces will be converted to hypens).}
 				]
 
 				; Iterate the rows, calculate new row and append it to result.
-				rows: make block! length? source/positions
+				rows: make block! length of source/positions
 				for-each row source/positions compose/only [
 					qry/set row
 					do (qry/body)
@@ -724,8 +724,8 @@ spaces will be converted to hypens).}
 				words: unbind words-of qry/new
 
 				length: 1
-				if series [length: length? words]
-				if any [not series greater? length? rows length] [
+				if series [length: length of words]
+				if any [not series greater? length of rows length] [
 					new-line/all/skip rows true length
 				]
 				if value [return rows]

@@ -20,27 +20,27 @@ script-needs [
 parsing-at-test: requirements 'parsing-at [
 
     [{Must return next position to succeed.}
-        not parse? [] parsing-at x []
-        not parse? [] parsing-at/end x []
+        not parse [] parsing-at x []
+        not parse [] parsing-at/end x []
     ]
 
     [{Test for tail by default.}
-        not parse? [] parsing-at x [x]
+        not parse [] parsing-at x [x]
     ]
 
     [{Can disable tail test.}
-        parse? [] parsing-at/end x [x]
+        did parse [] parsing-at/end x [x]
     ]
 
     [{Return next position to return success.}
-        parse? [y] parsing-at x [next x]
-        parse? [y] compose/only [(parsing-at x [x]) skip]
+        did parse [y] parsing-at x [next x]
+        did parse [y] compose/only [(parsing-at x [x]) skip]
     ]
 
     [{Return blank, false, or unset to fail.}
-        not parse? [y] parsing-at x [_]
-        not parse? [y] parsing-at x [false]
-        not parse? [y] parsing-at x [()]
+        not parse [y] parsing-at x [_]
+        not parse [y] parsing-at x [false]
+        not parse [y] parsing-at x [()]
     ]
 ]
 
@@ -48,12 +48,12 @@ parsing-deep-test: requirements 'parsing-deep [
 
     [
         all [
-             parse? [] parsing-deep []
-            parse? [x] parsing-deep [word!]
-            parse? [1 x] parsing-deep [word!]
-            parse? [1 [x]] parsing-deep [word!]
-            not parse? [1 [x] 2] parsing-deep [word!]
-            not parse? [1 [x] 2 [x]] parsing-deep [word!]
+            did parse [] parsing-deep []
+            did parse [x] parsing-deep [word!]
+            did parse [1 x] parsing-deep [word!]
+            did parse [1 [x]] parsing-deep [word!]
+            not parse [1 [x] 2] parsing-deep [word!]
+            not parse [1 [x] 2 [x]] parsing-deep [word!]
         ]
     ]
 ]
@@ -62,15 +62,15 @@ parsing-thru-test: requirements 'parsing-thru [
 
     [
         all [
-            not parse? [] parsing-thru ['x]
-            parse? [x] parsing-thru ['x]
-            parse? [1 2 x] parsing-thru ['x]
+            not parse [] parsing-thru ['x]
+            did parse [x] parsing-thru ['x]
+            did parse [1 2 x] parsing-thru ['x]
         ]
     ]
 
     [
         thru-x-or-y: parsing-thru ['x | 'y]
-        parse? [1 x 1 y] [2 thru-x-or-y]
+        did parse [1 x 1 y] [2 thru-x-or-y]
     ]
 ]
 
@@ -78,9 +78,9 @@ parsing-to-test: requirements 'parsing-to [
 
     [
         all [
-            not parse? [] parsing-to ['x]
+            not parse [] parsing-to ['x]
             to-x: parsing-to ['x]
-            parse? [1 2 x] [to-x skip]
+            did parse [1 2 x] [to-x skip]
         ]
     ]
 
@@ -93,7 +93,7 @@ parsing-to-test: requirements 'parsing-to [
 parsing-matched-test: requirements 'parsing-matched [
 
     [
-        parse? [x y] parsing-matched result [
+        did parse [x y] parsing-matched result [
             [2 skip]
             [2 word!]
             ['x 'y]
@@ -110,14 +110,14 @@ parsing-earliest-test: requirements 'parsing-earliest [
 
     [
         all [
-            not parse? [] parsing-earliest []
-            parse? [x] parsing-earliest [skip]
+            not parse [] parsing-earliest []
+            did parse [x] parsing-earliest [skip]
         ]
     ]
 
     [
         earliest: parsing-earliest [integer! word!] 
-        parse? [x 1] [earliest skip]
+        did parse [x 1] [earliest skip]
     ]
 ]
 

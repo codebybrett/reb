@@ -34,12 +34,12 @@ requirements 'get-parse-tree [
     ]
 
     [
-        tree: get-parse/literal [parse [x] r] [r] [r]
+        tree: get-parse-tree/literal [parse [x] r] [r] [r]
         equal? tree/2/1 'literal
     ]
 
     [
-        tree: get-parse/terminal [parse [x] r] [r] [r]
+        tree: get-parse-tree/terminal [parse [x] r] [r] [r]
         equal? tree/2/1 'terminal
     ]
 

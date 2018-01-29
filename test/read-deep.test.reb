@@ -21,8 +21,8 @@ requirements 'read-deep [
     [
         files: read-deep %../
         all [
-            find? files %read-deep.reb
-            find? files %test/read-deep.test.reb
+            did find files %read-deep.reb
+            did find files %test/read-deep.test.reb
         ]
     ]
 ]

@@ -23,7 +23,7 @@ decode-lines: function [
     pattern: compose/only [(line-prefix)]
     if not empty? indent [append pattern compose/only [opt (indent)]]
     line: [pos: pattern rest: (rest: remove/part pos rest) :rest thru newline]
-    if not parse? text [any line] [
+    if not parse text [any line] [
         fail [{Expected line} (line-of text pos) {to begin with} (mold line-prefix) {and end with newline.}]
     ]
     remove back tail text
@@ -127,7 +127,7 @@ text-line-of: function [
     parse text [
         any [
             to newline cursor:
-            if (lesser? index? cursor idx)
+            if (lesser? index-of cursor idx)
             advance
         ]
         advance

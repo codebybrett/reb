@@ -40,7 +40,7 @@ load-until-blank: function [
         opt wsp opt [1 2 newline] position: to end
     ]
 
-    to-value if parse? text rule [
+    to-value if did parse text rule [
         values: load copy/part text position
         reduce [values position]
     ]

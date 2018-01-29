@@ -109,23 +109,31 @@ lines-exceeding: function [
     line-list
 ]
 
-line-of: function [
+text-line-of: function [
     {Returns line number of position within text.}
-    text [string!]
-    position [string! integer!]
+    position [string!]
 ] [
 
-    line: _
+    ; Here newline is considered last character of a line.
+    ; No counting performed for empty text.
+    ; Line 0 does not exist.
 
-    if integer? position [
-        position: at text position
+    text: head of position
+    idx: index of position
+    line: 0
+
+    advance: [skip (line: line + 1)]
+
+    parse text [
+        any [
+            to newline cursor:
+            if (lesser? index? cursor idx)
+            advance
+        ]
+        advance
     ]
 
-    count-line: [(line: 1 + any [line 0])]
-
-    parse copy/part text next position [
-        any [to newline skip count-line] skip count-line
-    ]
-
+    if zero? line [line: _]
+   
     line
 ]

@@ -48,12 +48,15 @@ lines-exceeding-test: requirements 'lines-exceeding [
     [[2] = lines-exceeding 0 {^/x}]
 ]
 
-line-of-test: requirements 'line-of [
+text-line-of-test: requirements 'text-line-of [
 
-    [blank? line-of {} 0]
-    [1 = line-of {x} 1]
-    [1 = line-of {x^/} 2]
-    [2 = line-of {x^/y} 3]
+    [blank? text-line-of {}]
+    [1 = text-line-of {x}]
+    [1 = text-line-of next {x^/}]
+    [2 = text-line-of next next {x^/y}]
+    [2 = text-line-of next next {x^/y^/z}]
+    [2 = text-line-of next next next {x^/y^/}]
+    [2 = text-line-of next next next {x^/y^/z}]
 ]
 
 requirements %text-lines.reb [
@@ -61,5 +64,5 @@ requirements %text-lines.reb [
     ['passed = last encode-lines-test]
     ['passed = last decode-lines-test]
     ['passed = last lines-exceeding-test]
-    ['passed = last line-of-test]
+    ['passed = last text-line-of-test]
 ]

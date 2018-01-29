@@ -11,7 +11,7 @@ REBOL [
         See: http://www.apache.org/licenses/LICENSE-2.0
     }
     Author: "Brett Handley"
-    Purpose: {Transition load/next from Rebol 2 to Rebol 3.}
+    Purpose: {Functions operating on lines of text.}
 ]
 
 decode-lines: function [
@@ -24,9 +24,13 @@ decode-lines: function [
     if not empty? indent [append pattern compose/only [opt (indent)]]
     line: [pos: pattern rest: (rest: remove/part pos rest) :rest thru newline]
     if not parse text [any line] [
-        fail [{Expected line} (line-of text pos) {to begin with} (mold line-prefix) {and end with newline.}]
+        fail [
+            {Expected line} (text-line-of text pos)
+            {to begin with} (mold line-prefix)
+            {and end with newline.}
+        ]
     ]
-    remove back tail text
+    remove back tail of text
     text
 ]
 
@@ -35,9 +39,8 @@ encode-lines: func [
     text [string!]
     line-prefix [string!] {Usually "**" or "//".}
     indent [string!] {Usually "  ".}
-    /local bol pos
-] [
-
+    <local> bol pos
+][
     ; Note: Preserves newline formatting of the block.
 
     ; Encode newlines.
@@ -54,13 +57,13 @@ encode-lines: func [
     if not equal? newline :pos/1 [insert pos indent]
 
     ; Clear indent from tail if present.
-    if indent = pos: skip tail text 0 - length of indent [clear pos]
+    if indent = pos: skip tail of text 0 - length of indent [clear pos]
     append text newline
 
     text
 ]
 
-for-each-line: func [
+for-each-line: function [
     {Iterate over text lines.}
     'record [word!] {Word set to metadata for each line.}
     text [string!] {Text with lines.}
@@ -72,10 +75,10 @@ for-each-line: func [
 
         eol: any [
             find text newline
-            tail text
+            tail of text
         ]
 
-        set record compose [position (text) length (subtract index-of eol index-of text)]
+        set record compose [position (text) length (subtract index of eol index of text)]
         text: next eol
 
         do body
@@ -85,7 +88,7 @@ for-each-line: func [
 ]
 
 lines-exceeding: function [
-    {Return the line numbers of lines exceeding line-length}
+    {Return the line numbers of lines exceeding line-length.}
     line-length [integer!]
     text [string!]
 ] [
@@ -95,8 +98,8 @@ lines-exceeding: function [
     count-line: [
         (
             line: 1 + any [line 0]
-            if line-length < subtract index-of eol index-of bol [
-                line-list: append any [line-list copy []] line
+            if line-length < subtract index of eol index of bol [
+                append line-list: any [line-list copy []] line
             ]
         )
     ]
@@ -127,7 +130,7 @@ text-line-of: function [
     parse text [
         any [
             to newline cursor:
-            if (lesser? index-of cursor idx)
+            if (lesser? index of cursor idx)
             advance
         ]
         advance

@@ -43,7 +43,7 @@ read-deep: function [
     /strategy {Allows Queue building to be overridden.}
     take [function!] {TAKE next item from queue, building the queue as necessary.}
 ][
-    unless strategy [take: :read-deep-seq]
+    take: default [:read-deep-seq]
 
     result: make block! []
 

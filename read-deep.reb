@@ -33,7 +33,7 @@ read-deep-seq: function [
     item
 ]
 
-;; read-deep provide convenience over read-deep-seq.
+;; read-deep provides convenience over read-deep-seq.
 ;;
 
 read-deep: function [
@@ -51,7 +51,7 @@ read-deep: function [
 
     while [not tail? queue][
         path: take queue
-        append result :path ; Possible void.
+        append result :path ; Voids filtered out.
     ]
 
     unless full [
@@ -99,3 +99,96 @@ read-tree: function [
 
     new-line tree true
 ]
+
+; Want differnt flavours of file tree.
+
+
+read-tree-seq: function [
+    {Process next node in queue, building queue with new nodes to grow.}
+    return: [<opt> block!]
+    queue [block!]
+] [
+
+    node: take queue
+
+    ; Take node as input.
+    data: node/1
+    source: either %./ = data/1 [data/2][join-of data/1 data/2]
+
+    ; Add any node children.
+    if equal? #"/" last source [
+
+        ; Add node children.
+        child-nodes: map-each x read source [
+            data: reduce [source x]
+            reduce [data] ; New node.
+        ]
+        append node child-nodes
+        new-line/all next node true
+
+        ; Process children next.
+        insert queue child-nodes
+    ]
+]
+
+folder-structure-seq: function [
+    {Process next node in queue, building queue with new nodes to grow.}
+    return: [<opt> block!]
+    queue [block!]
+] [
+
+    node: take queue
+
+    ; Take node as input.
+    data: node/1
+    if not equal? #"/" last data/2 [
+        fail ["Expected queue of folders only."]
+    ]
+
+    source: either %./ = data/1 [data/2][join-of data/1 data/2]
+
+    ; Finalise folder data.
+    poke node 1 data/2
+
+    ; Add node children.
+    child-nodes: map-each x read source [
+        either equal? #"/" last x [
+            data: reduce [source x]
+            insert/only queue child: reduce [data]
+        ][
+            child: x
+        ]
+        child
+    ]
+    append node child-nodes
+    new-line/all next node true
+]
+
+file-tree: function [
+    {Return a tree from a deep read.}
+    root [file! url!] "Seed path."
+    /strategy {Allows Queue building to be overridden.}
+    take [function!] {TAKE next item from queue, building the queue as necessary.}
+][
+
+    take: default [:read-tree-seq]
+
+    tree: reduce [
+        reduce [%./ root]
+    ]
+    
+    queue: reduce [tree]
+
+    while [not tail? queue][
+        take queue
+    ]
+
+    tree
+]
+
+
+;; To what extent is this a grow-tree operation and is seeding the queue
+;; so specialised that it needs a dedicated file tree function?
+
+;; How to write a sequence which returns a read deep list from  one of the
+;; above two file trees?

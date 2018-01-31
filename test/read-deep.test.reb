@@ -19,24 +19,38 @@ script-needs [
 
 read-deep-test: requirements 'read-deep [
 
+    [did files: read-deep %../]
+    [did find files %read-deep.reb]
+    [did find files %test/read-deep.test.reb]
+]
+
+
+file-tree-test: requirements 'folder-tree [
+
     [
-        files: read-deep %../
-        all [
-            did find files %read-deep.reb
-            did find files %test/read-deep.test.reb
-        ]
+        %./ = first file-tree %./
+    ]
+
+    [
+        did find file-tree %./ %read-deep.test.reb
     ]
 ]
 
 
-folder-tree-test: requirements 'folder-tree [
-    [did find folder-tree %./ %read-deep.test.reb]
-    [did find/only folder-tree/full %./ [[%./ %read-deep.test.reb]]]
-]
+read-tree-test: requirements 'folder-tree [
 
+    [
+        [%./ %"" %./] = first read-tree %./
+    ]
+
+    [
+        did find/only read-tree %./ [[%./ %"" %read-deep.test.reb]]
+    ]
+]
 
 requirements %read-deep.reb [
 
     ['passed = last read-deep-test]
-    ['passed = last folder-tree-test]
+    ['passed = last file-tree-test]
+    ['passed = last read-tree-test]
 ]

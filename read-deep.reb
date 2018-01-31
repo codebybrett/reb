@@ -67,26 +67,32 @@ read-deep: function [
 ]
 
 ;; Builds a tree suitable for adding attributes.
-;; Node data contains the read argument and an item returned from the read.
+;; Node data has format [root relative-path item].
 
 grow-read-tree: function [
     {Grow next tree node in queue, where each node represents a file or folder.}
-    return: [<opt> block!]
+    return: [block!]
     queue [block!]
 ] [
 
     node: take queue
 
     ; Take node as input.
-    data: node/1
-    source: either %./ = data/1 [data/2][join-of data/1 data/2]
+    set [root relpath item] data: node/1
+
+    either %./ = data/3 [
+        source: join-of root data/2
+    ][
+        source: rejoin data
+        relpath: join-of relpath item
+    ]
 
     ; Add any node children.
     if equal? #"/" last source [
 
         ; Add node children.
-        child-nodes: map-each x read source [
-            data: reduce [source x]
+        child-nodes: map-each x read source  [
+            data: reduce [root relpath x]
             reduce [data] ; New node.
         ]
         append node child-nodes
@@ -99,12 +105,36 @@ grow-read-tree: function [
     node ; return current work item.
 ]
 
-;; Builds a concise tree suitable for displaying structure.
+;; Build a read tree.
+;;
+
+read-tree: function [
+    {Return a detailed read tree, suitable for attributes.}
+    root [file! url!] "Seed path."
+][
+
+    tree: reduce [
+        reduce [root %"" %./]
+    ]
+
+    take: :grow-read-tree
+   
+    queue: reduce [tree]
+
+    while [not tail? queue][
+        take queue
+    ]
+
+    tree
+]
+
+
+;; Builds a concise tree suitable for displaying folder structure.
 ;;
 
 grow-file-tree: function [
     {Grow next tree node in queue, where each node represents a file or folder.}
-    return: [<opt> block!]
+    return: [block!]
     queue [block!]
 ] [
 
@@ -113,10 +143,10 @@ grow-file-tree: function [
     ; Take node as input.
     data: node/1
     if not equal? #"/" last data/2 [
-        fail ["Expected queue of folders only."]
+        fail ["Expected queue of folders got:" mold data/2]
     ]
 
-    source: either %./ = data/1 [data/2][join-of data/1 data/2]
+    source: join-of data/1 data/2
 
     ; Finalise folder data.
     poke node 1 data/2
@@ -138,21 +168,19 @@ grow-file-tree: function [
     node ; return current work item.
 ]
 
-;; Build a folder tree.
-;;
 
-folder-tree: function [
-    {Return a folder tree from a deep read.}
+file-tree: function [
+    {Return a concise tree from a deep read.}
     root [file! url!] "Seed path."
-    /full {Returns a tree suitable for attributes.}
+    /full {Nodes become [root relpath item], also suitable for attributes.}
 ][
 
-    take: either full [:grow-read-tree] [:grow-file-tree]
-
     tree: reduce [
-        reduce [%./ root]
+        reduce [%"" root]
     ]
-    
+
+    take: :grow-file-tree
+   
     queue: reduce [tree]
 
     while [not tail? queue][

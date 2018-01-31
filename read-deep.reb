@@ -21,7 +21,7 @@ REBOL [
 ;;
 
 read-deep-seq: function [
-    {Iterative read deep.}
+    {Process next file in queue, adding next steps to queue.}
     queue [block!]
 ][
     item: take queue
@@ -37,7 +37,7 @@ read-deep-seq: function [
 ;;
 
 read-deep: function [
-    {Return files and folders using recursive read strategy.}
+    {Read file or url including subfolders.}
     root [file! url! block!]
     /full {Includes root path and retains full paths instead returning relative paths.}
     /strategy {Allows Queue building to be overridden.}
@@ -66,45 +66,11 @@ read-deep: function [
     result
 ]
 
-;; Tree result.
-;; Note: Could be processed by visit-tree.
-;; TODO: How to handle context of the paths, if wanting to linearise it.
+;; Builds a tree suitable for adding attributes.
+;; Node data contains the read argument and an item returned from the read.
 
-read-tree: function [
-    {Return a tree from a deep read.}
-    path [file! url!]
-][
-
-    recurse: function [
-        path
-    ][
-
-        tree: read path
-        
-        insert/only tree last split-path path 
-
-        for i 2 length? tree 1 [
-            item: pick tree i
-            if #"/" = last item [
-                poke tree i recurse join-of path :item
-            ]
-        ]
-
-        new-line/all tree true
-    ]
-
-    tree: recurse path
-
-    poke tree 1 clean-path path ; A useful first path value.
-
-    new-line tree true
-]
-
-; Want differnt flavours of file tree.
-
-
-read-tree-seq: function [
-    {Process next node in queue, building queue with new nodes to grow.}
+grow-read-tree: function [
+    {Grow next tree node in queue, where each node represents a file or folder.}
     return: [<opt> block!]
     queue [block!]
 ] [
@@ -129,10 +95,15 @@ read-tree-seq: function [
         ; Process children next.
         insert queue child-nodes
     ]
+
+    node ; return current work item.
 ]
 
-folder-structure-seq: function [
-    {Process next node in queue, building queue with new nodes to grow.}
+;; Builds a concise tree suitable for displaying structure.
+;;
+
+grow-file-tree: function [
+    {Grow next tree node in queue, where each node represents a file or folder.}
     return: [<opt> block!]
     queue [block!]
 ] [
@@ -153,8 +124,9 @@ folder-structure-seq: function [
     ; Add node children.
     child-nodes: map-each x read source [
         either equal? #"/" last x [
-            data: reduce [source x]
-            insert/only queue child: reduce [data]
+            data: reduce [source x] ; Node data.
+            child: reduce [data] ; Child node.
+            insert/only queue child ; Only folder nodes are queued.
         ][
             child: x
         ]
@@ -162,16 +134,20 @@ folder-structure-seq: function [
     ]
     append node child-nodes
     new-line/all next node true
+
+    node ; return current work item.
 ]
 
-file-tree: function [
-    {Return a tree from a deep read.}
+;; Build a file tree.
+;;
+
+folder-tree: function [
+    {Return a folder tree from a deep read.}
     root [file! url!] "Seed path."
-    /strategy {Allows Queue building to be overridden.}
-    take [function!] {TAKE next item from queue, building the queue as necessary.}
+    /full {Returns a tree suitable for attributes.}
 ][
 
-    take: default [:read-tree-seq]
+    take: either full [:grow-read-tree] [:grow-file-tree]
 
     tree: reduce [
         reduce [%./ root]
@@ -186,9 +162,6 @@ file-tree: function [
     tree
 ]
 
-
-;; To what extent is this a grow-tree operation and is seeding the queue
-;; so specialised that it needs a dedicated file tree function?
 
 ;; How to write a sequence which returns a read deep list from  one of the
 ;; above two file trees?

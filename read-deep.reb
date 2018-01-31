@@ -138,7 +138,7 @@ grow-file-tree: function [
     node ; return current work item.
 ]
 
-;; Build a file tree.
+;; Build a folder tree.
 ;;
 
 folder-tree: function [
@@ -161,7 +161,3 @@ folder-tree: function [
 
     tree
 ]
-
-
-;; How to write a sequence which returns a read deep list from  one of the
-;; above two file trees?

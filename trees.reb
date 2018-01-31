@@ -17,10 +17,10 @@ REBOL [
 ; - The first value in a block node is the node data,
 ;   subsequent items are the child nodes.
 ; - Every node that contains other nodes is a block.
-; - If one needs a node type it will need to be part of the data, unless it
-;   it can be represented by the node type itself.
 ; - Nodes which do not contain other nodes and whose data is not a block or paren,
 ;   may be represented by the value itself as an abbreviation of the tree.
+; - If one needs a node type it will need to be part of the data, unless it
+;   it can be represented by the value type used as the node.
 
 
 visit-tree: function [
@@ -51,7 +51,7 @@ visit-tree: function [
         eval sequence queue
     ]
 
-    tree
+    root
 ]
 
 pretty-tree: function [

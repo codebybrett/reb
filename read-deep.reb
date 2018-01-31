@@ -106,6 +106,8 @@ grow-read-tree: function [
 ]
 
 ;; Build a read tree.
+;; Three path elements are returned for each node: root, relative path and item.
+;; This is a flexible starting point that can be tailored using visit-tree.
 ;;
 
 read-tree: function [

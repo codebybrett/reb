@@ -25,7 +25,19 @@ read-deep-test: requirements 'read-deep [
 ]
 
 
-file-tree-test: requirements 'folder-tree [
+read-tree-test: requirements 'read-tree [
+
+    [
+        quote (%"" %./) = first read-tree %./
+    ]
+
+    [
+        did find/only read-tree %./ quote (%./ %read-deep.test.reb)
+    ]
+]
+
+
+file-tree-test: requirements 'file-tree [
 
     [
         %./ = first file-tree %./
@@ -37,20 +49,9 @@ file-tree-test: requirements 'folder-tree [
 ]
 
 
-read-tree-test: requirements 'folder-tree [
-
-    [
-        [%./ %"" %./] = first read-tree %./
-    ]
-
-    [
-        did find/only read-tree %./ [[%./ %"" %read-deep.test.reb]]
-    ]
-]
-
 requirements %read-deep.reb [
 
     ['passed = last read-deep-test]
-    ['passed = last file-tree-test]
     ['passed = last read-tree-test]
+    ['passed = last file-tree-test]
 ]

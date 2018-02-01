@@ -66,8 +66,18 @@ read-deep: function [
     result
 ]
 
-;; Builds a tree suitable for adding attributes.
-;; Node data has format [root relative-path item].
+
+;; Builds a tree suitable for storing attributes.
+;; - One can compose/deep this tree to yield a concise file tree.
+;; It is not clear that this sequence idea composes convienently.
+;; E.g. Should void DATA or SOURCE be a filter for nodes - may want to exclude some results.
+;;      Should void CHILD be a filter - need to avoid reads on some folders.
+;;      - and of course every child is a node
+;; It's possible to not take the first item from the queue and just rewrite it
+;; allowing a following sequence function to take it. One could chain these, but
+;; then there will be two different type of queue processing functions, ones that perform a
+;; take and those that just poke the first item.
+;; And Should read by wrapped by attempt for specific situations?
 
 grow-read-tree: function [
     {Grow next tree node in queue, where each node represents a file or folder.}
@@ -78,45 +88,41 @@ grow-read-tree: function [
     node: take queue
 
     ; Take node as input.
-    set [root relpath item] data: node/1
-
-    either %./ = data/3 [
-        source: join-of root data/2
-    ][
-        source: rejoin data
-        relpath: join-of relpath item
+    data: node/1
+    if not equal? #"/" last data/2 [
+        fail ["Expected queue of folders got:" mold data/2]
     ]
 
-    ; Add any node children.
-    if equal? #"/" last source [
+    source: either %./ = data/1 [data/2][join-of data/1 data/2]
 
-        ; Add node children.
-        child-nodes: map-each x read source  [
-            data: reduce [root relpath x]
-            reduce [data] ; New node.
+    ; Finalise folder data.
+    ; ...
+
+    ; Add node children.
+    child-nodes: map-each x read source [
+        data: reduce [source x]
+        either equal? #"/" last x [
+            child: reduce [as group! data]
+            insert/only queue child ; Only folder nodes are queued.
+        ][
+            child: as group! data
         ]
-        append node child-nodes
-        new-line/all next node true
-
-        ; Process children next.
-        insert queue child-nodes
+        child
     ]
+    append node child-nodes
+    new-line/all next node true
 
     node ; return current work item.
 ]
 
-;; Build a read tree.
-;; Three path elements are returned for each node: root, relative path and item.
-;; This is a flexible starting point that can be tailored using visit-tree.
-;;
 
 read-tree: function [
-    {Return a detailed read tree, suitable for attributes.}
+    {Return a concise tree from a deep read.}
     root [file! url!] "Seed path."
 ][
 
     tree: reduce [
-        reduce [root %"" %./]
+        as group! reduce [%"" root]
     ]
 
     take: :grow-read-tree
@@ -132,6 +138,8 @@ read-tree: function [
 
 
 ;; Builds a concise tree suitable for displaying folder structure.
+;; - This can also be obtained by using compose/deep on read-tree,
+;;   but this version does less work.
 ;;
 
 grow-file-tree: function [
@@ -148,7 +156,7 @@ grow-file-tree: function [
         fail ["Expected queue of folders got:" mold data/2]
     ]
 
-    source: join-of data/1 data/2
+    source: either %./ = data/1 [data/2][join-of data/1 data/2]
 
     ; Finalise folder data.
     poke node 1 data/2
@@ -156,8 +164,8 @@ grow-file-tree: function [
     ; Add node children.
     child-nodes: map-each x read source [
         either equal? #"/" last x [
-            data: reduce [source x] ; Node data.
-            child: reduce [data] ; Child node.
+            data: reduce [source x]
+            child: reduce [as group! data]
             insert/only queue child ; Only folder nodes are queued.
         ][
             child: x
@@ -174,7 +182,6 @@ grow-file-tree: function [
 file-tree: function [
     {Return a concise tree from a deep read.}
     root [file! url!] "Seed path."
-    /full {Nodes become [root relpath item], also suitable for attributes.}
 ][
 
     tree: reduce [

@@ -20,7 +20,7 @@ script-needs [
 requirements 'get-parse-tree [
 
     [
-        equal? [[root _ _ _ _]] get-parse-tree [][]
+        equal? [(root _ _ _ _)] get-parse-tree [][]
     ]
 
     [

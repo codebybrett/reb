@@ -21,21 +21,24 @@ REBOL [
 ;       The tree has this structure:
 ;
 ;           node: [data child1 child2 ... childn]
-;           data: [type word length position parent-slot]
+;           data: (type word length position parent-slot)
 ;
 ;           The parent-slot is the slot in the parent that refers to this node.
 ;
 ;           The root node represents the rule argument given to parse.
 ;
+;           Where the node cannot take children (literal or terminal) it will be
+;           represented by only by it's data.
+;
 ;       Only those rules that are specified are returned, in that sense it is closer
 ;       to an abstract syntax tree.
 ;
+;       Refine the structure to your needs. For example by using visit-tree (trees.reb).
 ;
 ; ---------------------------------------------------------------------------------------------------------------------
 
 script-needs [
     %parse-kit.reb
-    %trees.reb
 ]
 
 get-parse-tree: function [
@@ -81,7 +84,7 @@ get-parse-tree: function [
             ; Add rule node. Push.
 
             insert/only output output: reduce [
-                compose/only [(type) (name) (_) (position) (output)]
+                as group! compose/only [(type) (name) (_) (position) (output)]
             ]
             output: tail output ; Place to write first child.
         ] [
@@ -137,7 +140,7 @@ get-parse-tree: function [
                     length: subtract index-of position index-of start-position ; Length
                     position: start-position ; Input position
 
-                    output: insert/only output compose/only [terminal (name) (length) (position) (output)]
+                    output: insert/only output as group! compose/only [terminal (name) (length) (position) (output)]
                 ]
             ]
 
@@ -164,7 +167,7 @@ get-parse-tree: function [
 
         set [name length position] literal.evt
 
-        output: insert/only output compose/only [literal (name) (length) (position) (output)]
+        output: insert/only output as group! compose/only [literal (name) (length) (position) (output)]
 
     ] node
 
@@ -179,7 +182,7 @@ get-parse-tree: function [
     ; Do the parse.
     ; ----------------------------------------
 
-    output: tail reduce [compose [root (_) (_) (_) (_)]]
+    output: tail reduce [as group! compose [root (_) (_) (_) (_)]]
     try-result: _
     if error [set :error-state _]
     if error? set/only 'try-result try [do body] [

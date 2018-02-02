@@ -148,20 +148,6 @@ REBOL [
 ;           two-ints: parsing-when [2 integer!]
 ;           parse [1 2] [two-ints 2 skip]
 ;
-;   get-parse
-;
-;       Returns a tree representing the path PARSE takes through specified parse rules.
-;
-;       The tree has this structure:
-;
-;           node: [word parent properties child1 child2 ... childn]
-;
-;           where the node properties has type, input position and length,
-;           and the root node corresponds to the rule argument given to parse.
-;
-;       It should be straight forward to convert this tree to other structures as necessary.
-;       
-; 
 ;   impose
 ;
 ;       Reduce expressions to their values within a template block.
@@ -525,7 +511,7 @@ on-parsing: function [
     {Modifies rule to call function for [name matched position] when rule begins (_), succeeds (true) or fails (false).}
     rule [word!] {The rule name.}
     event [function!] {Single block argument callback function.}
-    /literal {Evaluates event for [name length starting-position] only when rule succeeds.}
+    /literal {Evaluates event for [name length position] only when rule succeeds.}
 ] [
 
     use [; Variable local to the new rule.

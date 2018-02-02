@@ -182,7 +182,7 @@ get-parse-tree: function [
     ; Do the parse.
     ; ----------------------------------------
 
-    output: tail reduce [as group! compose [root (_) (_) (_) (_)]]
+    output: tail reduce [as group! compose [rule (_) (_) (_) (_)]]
     try-result: _
     if error [set :error-state _]
     if error? set/only 'try-result try [do body] [

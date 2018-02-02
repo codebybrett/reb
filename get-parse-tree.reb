@@ -49,6 +49,7 @@ get-parse-tree: function [
     /terminal {Identify terminals (variable length). Avoids stack usage.} terminals [block! object!] {Block of words or object.}
     /nocomplete {Don't complete rules after early Parse exit (Parse's RETURN keyword), returns current emit position.}
     /error error-state [word!] {Set error-state word if an error occurs. Useful for debugging rules.}
+    /only {Store literals and terminals as full blocks nodes instead of abbreviating to the data group.}
 ] [
 
     ; ----------------------------------------
@@ -62,6 +63,16 @@ get-parse-tree: function [
 
     node: context [type: name: length: position: parent: _]
     matched: _
+
+    either only [
+        emit-leaf: function [block <with> output][
+            output: insert/only output reduce [as group! compose/only block]
+        ]
+    ][
+        emit-leaf: function [block <with> output][
+            output: insert/only output as group! compose/only block
+        ]
+    ]
 
     ; ----------------------------------------
     ; Embed rules event code into the parse rules.
@@ -96,10 +107,8 @@ get-parse-tree: function [
             either matched [
                 length: subtract index-of position index-of output/1/1/4 ; Length
                 output/1/1/3: length
-
                 output: next output ; Accept tree node.
             ] [
-
                 remove output ; Reject tree node.
             ]
         ]
@@ -132,20 +141,16 @@ get-parse-tree: function [
 
                 ; Starting to test this rule.
                 start-position: :position
-
             ] [
 
                 if matched [
-
                     length: subtract index-of position index-of start-position ; Length
                     position: start-position ; Input position
-
-                    output: insert/only output as group! compose/only [terminal (name) (length) (position) (output)]
+                    emit-leaf [terminal (name) (length) (position) (output)]
                 ]
             ]
 
         ] node
-
     ]
 
     ; Embed calls to event function.
@@ -164,11 +169,8 @@ get-parse-tree: function [
     do-literal-event: func [
         literal.evt
     ] bind [
-
         set [name length position] literal.evt
-
-        output: insert/only output as group! compose/only [literal (name) (length) (position) (output)]
-
+        emit-leaf [literal (name) (length) (position) (output)]
     ] node
 
     ; Embed calls to event function.

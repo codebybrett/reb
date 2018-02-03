@@ -13,6 +13,7 @@ REBOL [
 
 script-needs [
     %get-parse-tree.reb
+    %trees.reb
 ]
 
 extract-parse: function [

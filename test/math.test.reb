@@ -51,6 +51,6 @@ requirements 'math [
     ]
 
     [{Blocks interpreted by DO dialect.}
-        [add 1 (if true [2] [3])] = math/only [1 + [if true [2][3]]]
+        3 = math [1 + [either true [2][3]]]
     ]
 ]
